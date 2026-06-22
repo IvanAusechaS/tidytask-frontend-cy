@@ -1,0 +1,333 @@
+<link rel="stylesheet" href="/src/assets/styles/base.css" />
+<link rel="stylesheet" href="/src/assets/styles/components.css" />
+<link rel="stylesheet" href="/src/assets/styles/logo.css" />
+<link rel="stylesheet" href="/src/assets/styles/spinners.css" />
+<link rel="stylesheet" href="/src/assets/styles/toast.css" />
+<link rel="stylesheet" href="/src/assets/styles/profile.css" />
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+
+<style>
+  body {
+    padding-top: 50px;
+  }
+  .profile-container {
+    padding: 2rem 0.8rem;
+  }
+</style>
+
+<!-- Header fijo -->
+<header class="app-header">
+  <div class="user-avatar">
+    <span id="user-avatar-letter">U</span>
+  </div>
+  <div class="user-display">
+    <span id="user-name">Usuario</span>
+  </div>
+  <button id="logout-button" class="btn-primary btn-float">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+      <polyline points="16,17 21,12 16,7"></polyline>
+      <line x1="21" y1="12" x2="9" y2="12"></line>
+    </svg>
+    Cerrar sesión
+  </button>
+</header>
+
+<!-- Contenedor principal -->
+<div class="profile-container">
+  <div class="profile-card">
+    <!-- Skeleton/Loading state -->
+    <div id="profile-skeleton" class="profile-skeleton">
+      <div class="skeleton-header">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-text skeleton-title"></div>
+      </div>
+      <div class="skeleton-content">
+        <div class="skeleton-field">
+          <div class="skeleton-text skeleton-label"></div>
+          <div class="skeleton-text skeleton-value"></div>
+        </div>
+        <div class="skeleton-field">
+          <div class="skeleton-text skeleton-label"></div>
+          <div class="skeleton-text skeleton-value"></div>
+        </div>
+        <div class="skeleton-field">
+          <div class="skeleton-text skeleton-label"></div>
+          <div class="skeleton-text skeleton-value"></div>
+        </div>
+        <div class="skeleton-field">
+          <div class="skeleton-text skeleton-label"></div>
+          <div class="skeleton-text skeleton-value"></div>
+        </div>
+        <div class="skeleton-field">
+          <div class="skeleton-text skeleton-label"></div>
+          <div class="skeleton-text skeleton-value"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile content -->
+    <div id="profile-content" class="profile-content" style="display: none">
+      <!-- Back to Dashboard Button -->
+      <div class="navigation-header">
+        <button type="button" id="back-to-dashboard" class="btn-back">
+          <i class="icon-arrow-left"></i> Volver al Dashboard
+        </button>
+      </div>
+
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <span id="profile-avatar-letter">U</span>
+        </div>
+        <h1 id="profile-full-name">Nombre Completo</h1>
+      </div>
+
+      <form id="profile-form" class="profile-info" novalidate>
+        <!-- Primera grilla: Nombres y Apellidos -->
+        <div class="profile-grid-names">
+          <div class="info-group">
+            <label class="info-label" for="profile-first-name">Nombres</label>
+            <input
+              type="text"
+              id="profile-first-name"
+              name="profile-first-name"
+              class="info-input"
+              placeholder="Ingresa tus nombres"
+              required
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+
+          <div class="info-group">
+            <label class="info-label" for="profile-last-name">Apellidos</label>
+            <input
+              type="text"
+              id="profile-last-name"
+              name="profile-last-name"
+              class="info-input"
+              placeholder="Ingresa tus apellidos"
+              required
+              minlength="2"
+              maxlength="50"
+            />
+          </div>
+        </div>
+
+        <!-- Segunda grilla: Correo y Edad -->
+        <div class="profile-grid-contact">
+          <div class="info-group info-group-email">
+            <label class="info-label" for="profile-email">Correo</label>
+            <input
+              type="email"
+              id="profile-email"
+              name="profile-email"
+              class="info-input info-input-email"
+              placeholder="Ingresa tu correo electrónico"
+              required
+              maxlength="100"
+            />
+          </div>
+
+          <div class="info-group info-group-age">
+            <label class="info-label" for="profile-age">Edad</label>
+            <input
+              type="number"
+              id="profile-age"
+              name="profile-age"
+              class="info-input info-input-age"
+              placeholder="Ingresa tu edad"
+              required
+              min="13"
+              max="120"
+            />
+          </div>
+        </div>
+
+        <!-- Campo individual: Miembro desde -->
+        <div class="info-group profile-member-info">
+          <label class="info-label">Miembro desde</label>
+          <div class="info-value" id="profile-member-since">-</div>
+        </div>
+      </form>
+
+      <div class="profile-actions">
+        <button
+          id="save-profile-btn"
+          class="btn-primary"
+          type="submit"
+          form="profile-form"
+        >
+          <span id="save-spinner" class="spinner" style="display: none"></span>
+          <i class="fa-solid fa-floppy-disk"></i>
+          Guardar cambios
+        </button>
+        <button id="delete-account-btn" class="btn-danger">
+          <i class="fa-solid fa-trash"></i>
+          Eliminar cuenta
+        </button>
+      </div>
+
+      <!-- Sección de cambio de contraseña -->
+      <div class="password-section">
+        <!-- Enlace para mostrar cambio de contraseña -->
+        <div id="password-link-container" class="password-link-card">
+          <button id="show-password-form" class="btn-link-password">
+            <i class="fa-solid fa-key"></i>
+            <span>Cambiar Contraseña</span>
+            <i class="icon-arrow-down"></i>
+          </button>
+          <p class="password-link-description">
+            ¿Quieres cambiar tu contraseña actual?
+          </p>
+        </div>
+
+        <!-- Formulario de cambio de contraseña (inicialmente oculto) -->
+        <div
+          id="password-form-container"
+          class="profile-edit-card"
+          style="display: none"
+        >
+          <div class="password-form-header">
+            <h2>Cambiar Contraseña</h2>
+            <button id="hide-password-form" class="btn-close">
+              <i class="icon-close"></i>
+            </button>
+          </div>
+
+          <form id="change-password-form" class="edit-form">
+            <div class="form-field">
+              <label for="currentPassword" class="form-label"
+                >Contraseña actual *</label
+              >
+              <div class="password-field-container">
+                <input
+                  type="password"
+                  id="currentPassword"
+                  name="currentPassword"
+                  class="form-input"
+                  placeholder="Ingresa tu contraseña actual"
+                  required
+                />
+              </div>
+              <div
+                class="field-error"
+                id="currentPassword-error"
+                aria-live="polite"
+              ></div>
+            </div>
+
+            <div class="form-field">
+              <label for="newPassword" class="form-label"
+                >Nueva contraseña *</label
+              >
+              <div class="password-field-container">
+                <input
+                  type="password"
+                  id="newPassword"
+                  name="newPassword"
+                  class="form-input"
+                  placeholder="Ingresa tu nueva contraseña"
+                  required
+                  minlength="8"
+                />
+              </div>
+              <div
+                class="field-error"
+                id="newPassword-error"
+                aria-live="polite"
+              ></div>
+              <div class="field-help">
+                Mínimo 8 caracteres, debe incluir: mayúsculas, minúsculas,
+                números y símbolos especiales
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="confirmPassword" class="form-label"
+                >Confirmar nueva contraseña *</label
+              >
+              <div class="password-field-container">
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  class="form-input"
+                  placeholder="Confirma tu nueva contraseña"
+                  required
+                />
+              </div>
+              <div
+                class="field-error"
+                id="confirmPassword-error"
+                aria-live="polite"
+              ></div>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="submit"
+                id="change-password-btn"
+                class="btn-primary"
+                disabled
+              >
+                <span
+                  id="password-spinner"
+                  class="spinner"
+                  style="display: none"
+                ></span>
+                Cambiar contraseña
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="profile-error" class="profile-error" style="display: none">
+      <div class="error-icon">⚠️</div>
+      <h3>Error al cargar el perfil</h3>
+      <p id="error-message">No pudimos obtener tu información de perfil</p>
+      <button id="retry-btn" class="btn-secondary">Reintentar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmación para eliminar cuenta -->
+<div id="delete-modal" class="modal" style="display: none">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Eliminar cuenta</h3>
+      <button id="close-modal" class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>¿Estás seguro que deseas eliminar?</strong></p>
+      <p class="warning-text">
+        Tu cuenta será eliminada permanentemente junto con todas tus tareas y
+        datos. Esta acción no se puede deshacer.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button id="cancel-delete" class="btn-secondary">Cancelar</button>
+      <button id="confirm-delete" class="btn-danger">
+        <span id="delete-spinner" class="spinner" style="display: none"></span>
+        Eliminar cuenta
+      </button>
+    </div>
+  </div>
+</div>

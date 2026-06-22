@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Procesando Autenticación</title>
+    <link rel="stylesheet" href="/public/src/assets/styles/auth-pages.css" />
+    <link rel="stylesheet" href="/public/src/assets/styles/spinners.css" />
+  </head>
+  <body class="auth-callback-page">
+    <div class="auth-container">
+      <h1>Procesando Autenticación</h1>
+      <p id="status-message">Analizando respuesta del servidor...</p>
+      <div class="loader"></div>
+      <div id="data-display" class="data-display"></div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const statusMessage = document.getElementById("status-message");
+        const dataDisplay = document.getElementById("data-display");
+
+        // Función para extraer JSON de texto plano
+        function extractJsonFromText(text) {
+          try {
+            // Busca el primer '{'
+            const start = text.indexOf("{");
+            if (start === -1) return null;
+
+            // Busca el último '}'
+            const end = text.lastIndexOf("}") + 1;
+            if (end === 0) return null;
+
+            // Extrae el JSON y parsea
+            const jsonStr = text.substring(start, end);
+            return JSON.parse(jsonStr);
+          } catch (e) {
+            console.error("Error extrayendo JSON:", e);
+            return null;
+          }
+        }
+
+        // Primera opción: comprobar sessionStorage (prioridad más alta)
+        const storedData = sessionStorage.getItem("google_auth_data");
+        if (storedData) {
+          try {
+            const data = JSON.parse(storedData);
+            processAuthData(data);
+            // Limpiar sessionStorage después de usar los datos
+            sessionStorage.removeItem("google_auth_data");
+            return;
+          } catch (e) {
+            console.error("Error procesando datos de sessionStorage:", e);
+          }
+        }
+
+        // Segunda opción: obtener el contenido de la página
+        const bodyText = document.body.textContent.trim();
+
+        // Buscar respuesta JSON en el contenido
+        if (bodyText.includes('"token"') && bodyText.includes('"user"')) {
+          try {
+            const data = extractJsonFromText(bodyText);
+            if (data) {
+              processAuthData(data);
+              return;
+            }
+          } catch (error) {
+            console.error("Error procesando datos del body:", error);
+          }
+        }
+
+        // Si llegamos aquí, no se encontraron datos válidos
+        statusMessage.textContent =
+          "No se encontraron datos de autenticación. Redirigiendo al login...";
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+
+        // Función para procesar los datos de autenticación
+        function processAuthData(data) {
+          if (data.token && data.user) {
+            // Mostrar datos (para depuración)
+            dataDisplay.style.display = "block";
+            const sanitizedData = { ...data };
+            if (sanitizedData.token && sanitizedData.token.length > 20) {
+              sanitizedData.token =
+                sanitizedData.token.substring(0, 10) +
+                "..." +
+                sanitizedData.token.substring(sanitizedData.token.length - 10);
+            }
+            dataDisplay.textContent = JSON.stringify(sanitizedData, null, 2);
+
+            // Guardar datos en localStorage
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+
+            // Actualizar mensaje
+            statusMessage.textContent = `Autenticación exitosa. Bienvenido, ${
+              data.user.firstName || "Usuario"
+            }!`;
+
+            // Redirigir al dashboard después de un retraso
+            setTimeout(() => {
+              window.location.href = "/dashboard";
+            }, 2000);
+          } else {
+            throw new Error("Datos incompletos en la respuesta");
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Auth Callback</title>
+    <link rel="stylesheet" href="/public/src/assets/styles/auth-pages.css" />
+    <link rel="stylesheet" href="/public/src/assets/styles/spinners.css" />
+  </head>
+  <body class="auth-callback-page">
+    <div class="auth-container">
+      <h1>Autenticación con Google</h1>
+      <p>Procesando tu inicio de sesión...</p>
+      <div class="loader"></div>
+      <p id="message">Serás redirigido automáticamente.</p>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Función para extraer JSON de texto plano
+        function extractJsonFromText(text) {
+          try {
+            // Busca el primer '{'
+            const start = text.indexOf("{");
+            if (start === -1) return null;
+
+            // Busca el último '}'
+            const end = text.lastIndexOf("}") + 1;
+            if (end === 0) return null;
+
+            // Extrae el JSON y parsea
+            const jsonStr = text.substring(start, end);
+            return JSON.parse(jsonStr);
+          } catch (e) {
+            console.error("Error extrayendo JSON:", e);
+            return null;
+          }
+        }
+
+        // Primera opción: Obtener datos de la URL
+        const responseData = document.location.href.split("?response=")[1];
+
+        // Segunda opción: Procesar el contenido del body
+        const bodyText = document.body.textContent;
+        const hasJsonInBody =
+          bodyText &&
+          bodyText.includes('"token"') &&
+          bodyText.includes('"user"');
+
+        if (responseData) {
+          try {
+            // Decodificar la respuesta
+            const decodedData = decodeURIComponent(responseData);
+            const authData = JSON.parse(decodedData);
+
+            // Guardar token y datos de usuario
+            localStorage.setItem("token", authData.token);
+            localStorage.setItem("user", JSON.stringify(authData.user));
+
+            // Redirigir al dashboard
+            document.getElementById("message").textContent =
+              "Inicio de sesión exitoso. Redirigiendo...";
+            setTimeout(() => {
+              window.location.href = "/dashboard";
+            }, 1500);
+          } catch (error) {
+            console.error("Error processing response:", error);
+            document.getElementById("message").textContent =
+              "Error procesando la respuesta. Intenta nuevamente.";
+          }
+        } else if (hasJsonInBody) {
+          // Intentar extraer JSON del contenido del body
+          document.getElementById("message").textContent =
+            "Procesando respuesta de autenticación...";
+
+          try {
+            const data = extractJsonFromText(bodyText);
+
+            if (data && data.token && data.user) {
+              // Guardar token y datos de usuario en localStorage
+              localStorage.setItem("token", data.token);
+              localStorage.setItem("user", JSON.stringify(data.user));
+
+              document.getElementById("message").textContent = `Bienvenido, ${
+                data.user.firstName || "Usuario"
+              }! Redirigiendo al dashboard...`;
+
+              // Redirigir al dashboard después de un breve retraso
+              setTimeout(() => {
+                window.location.href = "/dashboard";
+              }, 1500);
+            } else {
+              throw new Error("Datos de autenticación incompletos");
+            }
+          } catch (e) {
+            console.error("Error procesando datos JSON del body:", e);
+            document.getElementById("message").textContent =
+              "Error al procesar la respuesta. Inténtalo de nuevo.";
+
+            // Después de un tiempo, cerrar la ventana si es una ventana emergente
+            setTimeout(() => {
+              if (window.opener) {
+                window.close();
+              } else {
+                window.location.href = "/login";
+              }
+            }, 2000);
+          }
+        } else {
+          // Si no hay datos ni en la URL ni en el body, redirigir a login
+          document.getElementById("message").textContent =
+            "No se recibieron datos de autenticación. Redirigiendo...";
+          setTimeout(() => {
+            if (window.opener) {
+              window.close();
+            } else {
+              window.location.href = "/login";
+            }
+          }, 1500);
+        }
+      });
+    </script>
+  </body>
+</html>
+

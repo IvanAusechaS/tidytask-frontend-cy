@@ -1,0 +1,240 @@
+/* Estilos para notificaciones toast */
+@import "variables.css";
+
+/* Contenedor principal de toasts */
+.toast-container {
+  position: fixed;
+  top: 90%; /* Cambiado de 20px a 50% para centrar verticalmente */
+  right: 20px;
+  transform: translateY(-50%); /* Centrar verticalmente */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+  pointer-events: none;
+  max-width: 350px;
+}
+
+/* Toast individual */
+.toast {
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.35);
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  min-height: 50px;
+}
+
+/* Mensaje del toast */
+.toast-message {
+  flex: 1;
+  margin-right: 10px;
+  line-height: 1.4;
+}
+
+/* Contenedor de botones del toast */
+.toast-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* Botón de deshacer */
+.toast-undo {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  color: #333;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.toast-undo:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.05);
+}
+
+.toast.toast-warning .toast-undo {
+  background: #212529;
+  color: #fff;
+}
+
+.toast.toast-warning .toast-undo:hover {
+  background: #343a40;
+}
+
+/* Botón de cerrar */
+.toast-close {
+  background: none;
+  border: none;
+  color: currentColor;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+}
+
+.toast-close:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.toast:before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast.toast-success {
+  background: linear-gradient(135deg, #28a745, #218838);
+}
+
+.toast.toast-error {
+  background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.toast.toast-warning {
+  background: linear-gradient(135deg, #ffc107, #e0a800);
+  color: #212529;
+}
+
+.toast.toast-info {
+  background: linear-gradient(135deg, #17a2b8, #138496);
+}
+
+/* Animación de la barra de progreso */
+.toast.show:before {
+  animation: progress 5s linear forwards;
+}
+
+@keyframes progress {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}
+
+/* Ícono para cada tipo de toast */
+.toast:after {
+  content: "";
+  display: none; /* Ocultar los íconos completamente */
+  width: 0;
+  height: 0;
+  margin-right: 0;
+}
+
+.toast.toast-success:after {
+  content: "";
+}
+
+.toast.toast-error:after {
+  content: "";
+}
+
+.toast.toast-warning:after {
+  content: "";
+}
+
+.toast.toast-info:after {
+  content: "";
+}
+
+/* Media queries para responsividad */
+@media (max-width: 768px) {
+  .toast-container {
+    top: 90%; /* Mantener centrado verticalmente */
+    right: 10px;
+    left: 10px;
+    transform: translateY(-50%); /* Mantener centrado verticalmente */
+    max-width: none;
+  }
+
+  .toast {
+    font-size: 0.9rem;
+    padding: 12px 15px;
+  }
+
+  .toast-undo {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .toast-buttons {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .toast-container {
+    top: 90%; /* Mantener centrado verticalmente */
+    right: 5px;
+    left: 5px;
+    transform: translateY(-50%); /* Mantener centrado verticalmente */
+  }
+
+  .toast {
+    font-size: 0.85rem;
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .toast-message {
+    margin-right: 0;
+    text-align: center;
+  }
+
+  .toast-buttons {
+    justify-content: space-between;
+    margin-left: 0;
+  }
+
+  .toast-undo {
+    font-size: 11px;
+    padding: 4px 8px;
+    flex: 1;
+    margin-right: 8px;
+  }
+
+  .toast:after {
+    width: 0;
+    height: 0;
+    margin-right: 0;
+  }
+}

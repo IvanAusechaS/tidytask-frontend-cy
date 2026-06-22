@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autenticación Google</title>
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: linear-gradient(135deg, #4a6ee0, #8a64c0);
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        text-align: center;
+        max-width: 500px;
+        width: 90%;
+      }
+
+      h1 {
+        color: #4a6ee0;
+        margin-bottom: 20px;
+      }
+
+      p {
+        margin-bottom: 20px;
+        line-height: 1.6;
+      }
+
+      .loader {
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #4a6ee0;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      button {
+        background: #4a6ee0;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+
+      button:hover {
+        background: #3a5ec0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Autenticación Exitosa</h1>
+      <p id="welcome-msg">Procesando autenticación...</p>
+      <div class="loader" id="loader"></div>
+      <div id="actions" style="display: none">
+        <button id="dashboard-btn">Ir al Dashboard</button>
+        <button id="close-btn">Cerrar Ventana</button>
+      </div>
+    </div>
+
+    <script>
+      // Esta función se ejecuta cuando la página carga
+      document.addEventListener("DOMContentLoaded", function () {
+        const welcomeMsg = document.getElementById("welcome-msg");
+        const loader = document.getElementById("loader");
+        const actions = document.getElementById("actions");
+        const dashboardBtn = document.getElementById("dashboard-btn");
+        const closeBtn = document.getElementById("close-btn");
+
+        // Procesar los parámetros de la URL
+        function getQueryParam(name) {
+          const urlParams = new URLSearchParams(window.location.search);
+          return urlParams.get(name);
+        }
+
+        // Extraer datos de URL o del contenido de la página
+        const dataParam = getQueryParam("data");
+        let userData = null;
+
+        if (dataParam) {
+          // Si tenemos datos en los parámetros URL
+          try {
+            userData = JSON.parse(decodeURIComponent(dataParam));
+          } catch (e) {
+            console.error("Error al decodificar parámetros de URL:", e);
+          }
+        } else {
+          // Función para extraer JSON del contenido de la página (fallback)
+          function extractJsonFromText(text) {
+            try {
+              // Busca el primer '{'
+              const start = text.indexOf("{");
+              if (start === -1) return null;
+
+              // Busca el último '}'
+              const end = text.lastIndexOf("}") + 1;
+              if (end === 0) return null;
+
+              // Extrae el JSON y parsea
+              const jsonStr = text.substring(start, end);
+              return JSON.parse(jsonStr);
+            } catch (e) {
+              console.error("Error extrayendo JSON:", e);
+              return null;
+            }
+          }
+
+          // Extraer JSON de la página como fallback
+          const bodyText = document.body.textContent.trim();
+
+          // Si el texto contiene un JSON con token y user
+          if (bodyText.includes('"token"') && bodyText.includes('"user"')) {
+            userData = extractJsonFromText(bodyText);
+          }
+        }
+
+        // Procesar los datos obtenidos
+        if (userData && userData.token && userData.user) {
+          // Guardar en localStorage
+          localStorage.setItem("token", userData.token);
+          localStorage.setItem("user", JSON.stringify(userData.user));
+          // Establecer flag de redirección pendiente
+          localStorage.setItem("needs_dashboard_redirect", "true");
+          // Registrar timestamp de autenticación exitosa
+          localStorage.setItem("auth_success_time", Date.now().toString());
+
+          // Notificar a la ventana principal (si existe)
+          try {
+            if (window.opener) {
+              window.opener.postMessage(
+                {
+                  type: "AUTH_SUCCESS",
+                  user: userData.user,
+                  redirect: true,
+                },
+                "*"
+              );
+
+              // Mostrar mensaje de éxito
+              welcomeMsg.textContent = `¡Autenticación exitosa! La ventana principal se actualizará automáticamente.`;
+              loader.style.display = "none";
+
+              // Cerrar ventana después de un momento
+              setTimeout(function () {
+                window.close();
+              }, 2000);
+            } else {
+              // Si no es popup, mostrar botones de acción
+              welcomeMsg.textContent = `¡Bienvenido, ${userData.user.firstName}!`;
+              loader.style.display = "none";
+              actions.style.display = "block";
+
+              // Configurar redirección automática
+              setTimeout(function () {
+                window.location.href = "/"; // Redirigir a la raíz donde se manejará la redirección al dashboard
+              }, 2000);
+            }
+          } catch (e) {
+            console.error("Error en proceso de autenticación:", e);
+            // Mostrar mensaje y botones
+            welcomeMsg.textContent = `¡Autenticación exitosa! Puedes continuar al dashboard.`;
+            loader.style.display = "none";
+            actions.style.display = "block";
+          }
+
+          // Manejar la redirección de manera más controlada
+          if (window.opener) {
+            // Si es una ventana emergente, solo notificar a la ventana principal
+            // y dejar que la ventana principal maneje la redirección
+            console.log("Notificando a la ventana principal para redirección");
+            try {
+              // No redirigir directamente, solo notificar
+              window.opener.postMessage(
+                {
+                  type: "AUTH_SUCCESS",
+                  user: userData.user,
+                  redirect: true,
+                },
+                "*"
+              );
+
+              // Mostrar mensaje de éxito
+              welcomeMsg.textContent = `¡Autenticación exitosa! Redirigiendo...`;
+
+              // Cerrar ventana después de un momento
+              setTimeout(function () {
+                window.close();
+              }, 2000);
+            } catch (e) {
+              console.error("Error al comunicar con ventana principal:", e);
+              // Si falla la comunicación, mostrar el botón para cierre manual
+              welcomeMsg.textContent = `¡Autenticación exitosa! Puedes cerrar esta ventana.`;
+            }
+          } else {
+            // Si no es popup, esperar más tiempo antes de redirigir
+            welcomeMsg.textContent = `¡Autenticación exitosa! Redirigiendo al dashboard...`;
+            setTimeout(function () {
+              window.location.href = "/"; // Redirigir a la raíz, y desde ahí el router manejará la redirección
+            }, 2000);
+          }
+        } else {
+          // Error o no hay datos
+          welcomeMsg.textContent =
+            "No se encontraron datos de autenticación. Por favor, intenta de nuevo.";
+          loader.style.display = "none";
+          // Mostrar botón para volver al login
+          actions.style.display = "block";
+          dashboardBtn.style.display = "none";
+          closeBtn.textContent = "Volver al Login";
+          closeBtn.addEventListener("click", function () {
+            window.location.href = "/login";
+          });
+        }
+      });
+
+      // Escuchar mensajes de la ventana principal
+      window.addEventListener("message", function (event) {
+        if (event.data && event.data.type === "CHECK_AUTH_STATUS") {
+          // Responder con el estado de autenticación
+          const token = localStorage.getItem("token");
+          const user = localStorage.getItem("user")
+            ? JSON.parse(localStorage.getItem("user"))
+            : null;
+
+          if (token && user) {
+            event.source.postMessage(
+              {
+                type: "AUTH_STATUS",
+                authenticated: true,
+                user: user,
+              },
+              "*"
+            );
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

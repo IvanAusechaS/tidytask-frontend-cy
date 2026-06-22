@@ -1,0 +1,140 @@
+<link rel="stylesheet" href="/src/assets/styles/base.css" />
+<link rel="stylesheet" href="/src/assets/styles/toast.css" />
+<link rel="stylesheet" href="/src/assets/styles/logo.css" />
+<link rel="stylesheet" href="/src/assets/styles/animations.css" />
+<link rel="stylesheet" href="/src/assets/styles/components.css" />
+<link rel="stylesheet" href="/src/assets/styles/home.css" />
+
+<style>
+  body {
+    background: linear-gradient(150deg, #6525c9 0%, #ff0000 100%);
+    /*linear-gradient(150deg, #7341e7 0%, #ff0000 100%)*/
+    margin: 0;
+    padding: 0;
+  }
+</style>
+
+<!-- Header de navegación -->
+<header class="landing-header">
+  <div class="header-content">
+    <div class="header-logo">
+      <img
+        src="/src/assets/content/logo-tidytasks.png"
+        alt="TidyTasks Logo"
+        class="app-logo"
+      />
+      <h2 class="logo-text">TidyTasks</h2>
+    </div>
+
+    <!-- Botón hamburguesa -->
+    <button class="hamburger-btn" id="hamburger-btn" aria-label="Menú">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+
+    <!-- Menú de navegación -->
+    <nav class="header-nav" id="header-nav">
+      <div class="header-actions">
+        <button id="mobile-login-button" class="btn-secondary btn-float">
+          Iniciar Sesión
+        </button>
+        <button id="mobile-signup-button" class="btn-primary btn-float">
+          Registrarse
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- Sección Hero -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1 class="hero-title">
+        Organiza tu vida con <span class="span-highlight-h1">TidyTasks</span>
+      </h1>
+      <p class="hero-description">
+        La aplicación definitiva para gestionar tus tareas de manera eficiente.
+        Mantén todo organizado, aumenta tu productividad y alcanza tus
+        objetivos.
+      </p>
+      <div class="hero-actions">
+        <button
+          id="get-started-button"
+          class="btn-action btn-primary btn-large btn-pulse"
+        >
+          Comenzar Gratis
+        </button>
+        <button id="learn-more-button" class="btn-outline btn-large">
+          Saber Más
+        </button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img
+        src="/src/assets/content/wallpaper.svg"
+        alt="TidyTasks Dashboard"
+        class="hero-img"
+      />
+    </div>
+  </div>
+</section>
+
+<!-- Sección de características -->
+<section class="features-section">
+  <div class="features-content">
+    <h2 class="section-title">¿Por qué elegir TidyTasks?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <h3 class="feature-title">Gestión Intuitiva</h3>
+        <p class="feature-description">
+          Crea, organiza y gestiona tus tareas con una interfaz simple y
+          elegante.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3 class="feature-title">Sincronización en Tiempo Real</h3>
+        <p class="feature-description">
+          Accede a tus tareas desde cualquier dispositivo, siempre actualizadas.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3 class="feature-title">Prioridades Claras</h3>
+        <p class="feature-description">
+          Establece prioridades y fechas límite para mantener el enfoque en lo
+          importante.
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3 class="feature-title">Seguimiento de Progreso</h3>
+        <p class="feature-description">
+          Visualiza tu productividad y celebra tus logros con estadísticas
+          detalladas.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sección CTA -->
+<section class="cta-section">
+  <div class="cta-content">
+    <h2 class="cta-title">¿Listo para ser más productivo?</h2>
+    <p class="cta-description">
+      Únete a miles de usuarios que ya organizan su vida con TidyTasks
+    </p>
+    <button
+      id="cta-signup-button"
+      class="btn-now btn-primary btn-large btn-pulse btn-float"
+    >
+      Comenzar Ahora
+    </button>
+  </div>
+</section>
+
+<!-- Footer will be automatically injected by FooterManager -->

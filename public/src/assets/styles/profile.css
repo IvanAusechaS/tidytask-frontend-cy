@@ -1,0 +1,1309 @@
+/* Estilos específicos para las páginas de perfil */
+
+/* Contenedor principal del perfil */
+.profile-container {
+  max-width: 960px; /* Reducido de 1200px a 960px (-20%) */
+  margin: 0 auto;
+  padding: 1.6rem 0.8rem; /* Reducido de 2rem 1rem a 1.6rem 0.8rem (-20%) */
+  min-height: calc(100vh - 64px); /* Reducido de 80px a 64px (-20%) */
+}
+
+/* Tarjeta del perfil */
+.profile-card {
+  background: white;
+  border-radius: 10px; /* Reducido de 12px a 10px (-17%) */
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.1); /* Reducido de 4px 20px */
+  padding: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  margin-bottom: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  text-align: left; /* Ensure profile card content is left-aligned */
+}
+
+.profile-edit-card {
+  background: white;
+  border-radius: 10px; /* Reducido de 12px a 10px (-17%) */
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.1); /* Reducido de 4px 20px */
+  padding: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  margin-bottom: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  text-align: left; /* Ensure profile edit card content is left-aligned */
+}
+
+/* Header del perfil */
+.profile-header {
+  text-align: center;
+  padding-bottom: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+}
+
+/* Navegación - Botón volver */
+.navigation-header {
+  margin-bottom: 1.2rem; /* Reducido de 1.5rem a 1.2rem (-20%) */
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem; /* Reducido de 0.5rem a 0.4rem (-20%) */
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.6rem 0.8rem; /* Reducido de 0.75rem 1rem a 0.6rem 0.8rem (-20%) */
+  border-radius: 6px; /* Reducido de 8px a 6px (-25%) */
+  font-size: 0.7rem; /* Reducido de 0.875rem a 0.7rem (-20%) */
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+  background: #e2e8f0;
+  color: #475569;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.btn-back:active {
+  transform: translateY(0);
+}
+
+.btn-back .icon-arrow-left {
+  font-size: 0.6rem; /* Reducido de 0.75rem a 0.6rem (-20%) */
+}
+
+.btn-back .icon-arrow-left::before {
+  content: "←";
+}
+
+.profile-avatar {
+  width: 64px; /* Reducido de 80px a 64px (-20%) */
+  height: 64px; /* Reducido de 80px a 64px (-20%) */
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8463f9, #b53ee3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  font-size: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+
+.profile-header h1 {
+  font-size: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+/* Información del perfil */
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: left;
+}
+
+/* Primera grilla: Nombres y Apellidos */
+.profile-grid-names {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Cada uno ocupa 1fr */
+  gap: 1.5rem;
+}
+
+/* Segunda grilla: Correo y Edad */
+.profile-grid-contact {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Correo 2fr, Edad 1fr */
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Campo individual de miembro desde */
+.profile-member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem; /* Reducido de 0.5rem a 0.4rem (-20%) */
+}
+
+.info-label {
+  font-size: 0.7rem; /* Reducido de 0.875rem a 0.7rem (-20%) */
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.4px; /* Reducido de 0.5px a 0.4px (-20%) */
+}
+
+.info-value {
+  font-size: 0.9rem; /* Reducido de 1.125rem a 0.9rem (-20%) */
+}
+
+/* Estilos para inputs editables en el perfil */
+.info-input {
+  font-size: 1.125rem;
+  color: #2d3748;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.info-input:focus {
+  outline: none;
+  border-color: #8463f9;
+  box-shadow: 0 0 0 3px rgba(132, 99, 249, 0.1);
+  background: #fefefe;
+}
+
+.info-input:hover {
+  border-color: #cbd5e1;
+}
+
+.info-input.readonly {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.info-input.readonly:focus {
+  border-color: #e2e8f0;
+  box-shadow: none;
+}
+
+.info-input::placeholder {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Acciones del perfil */
+.profile-actions {
+  display: flex;
+  gap: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  justify-content: center;
+  margin-top: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  padding-top: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Sección de contraseña */
+.password-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Transiciones suaves para el formulario de contraseña */
+.password-link-card {
+  transition: all 0.3s ease;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.password-link-card.hiding {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.profile-edit-card {
+  transition: all 0.4s ease;
+  opacity: 0;
+  transform: translateY(10px);
+  max-height: 0;
+  overflow: hidden;
+}
+
+.profile-edit-card.showing {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 600px;
+  overflow: visible;
+}
+
+@media (max-width: 768px) {
+  .password-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .profile-edit-card.showing {
+    max-height: 700px;
+  }
+}
+
+.profile-actions .btn-primary,
+.profile-actions .btn-danger {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem; /* Reducido de 0.5rem a 0.4rem (-20%) */
+  padding: 0.6rem 1.2rem; /* Reducido de 0.75rem 1.5rem a 0.6rem 1.2rem (-20%) */
+  font-weight: 600;
+  border-radius: 6px; /* Reducido de 8px a 6px (-25%) */
+  transition: all 0.3s ease;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #8463f9, #b53ee3);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(132, 99, 249, 0.3);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  padding: 12px 16px; /* Reducido de 15px 20px a 12px 16px (-20%) */
+  border-radius: 8px; /* Reducido de 10px a 8px (-20%) */
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #64748b;
+  border: 2px solid #e2e8f0;
+  padding: 0.6rem 1.2rem; /* Reducido de 0.75rem 1.5rem a 0.6rem 1.2rem (-20%) */
+  font-weight: 600;
+  border-radius: 6px; /* Reducido de 8px a 6px (-25%) */
+  transition: all 0.3s ease;
+  cursor: pointer;
+  justify-content: center;
+}
+
+.btn-secondary:hover {
+  border-color: #8463f9;
+  color: #8463f9;
+  background: #f8fafc;
+}
+
+/* Skeleton loading */
+.profile-skeleton {
+  animation: pulse 1.5s ease-in-out infinite alternate;
+}
+
+.skeleton-header {
+  text-align: center;
+  padding-bottom: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+}
+
+.skeleton-avatar {
+  width: 64px; /* Reducido de 80px a 64px (-20%) */
+  height: 64px; /* Reducido de 80px a 64px (-20%) */
+  border-radius: 50%;
+  background: #e2e8f0;
+  margin: 0 auto 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+}
+
+.skeleton-content {
+  display: grid;
+  gap: 1.2rem; /* Reducido de 1.5rem a 1.2rem (-20%) */
+}
+
+.skeleton-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem; /* Reducido de 0.5rem a 0.4rem (-20%) */
+}
+
+.skeleton-text {
+  background: #e2e8f0;
+  border-radius: 3px; /* Reducido de 4px a 3px (-25%) */
+  height: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+}
+
+.skeleton-title {
+  height: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  width: 60%;
+  margin: 0 auto;
+}
+
+.skeleton-label {
+  width: 30%;
+  height: 0.7rem; /* Reducido de 0.875rem a 0.7rem (-20%) */
+}
+
+.skeleton-value {
+  width: 100%;
+  height: 2.4rem; /* Reducido de 3rem a 2.4rem (-20%) */
+  border-radius: 6px; /* Reducido de 8px a 6px (-25%) */
+}
+
+.skeleton-input {
+  width: 100%;
+  height: 2rem; /* Reducido de 2.5rem a 2rem (-20%) */
+  border-radius: 6px; /* Reducido de 8px a 6px (-25%) */
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Error state */
+.profile-error {
+  text-align: center;
+  padding: 2.4rem 0.8rem; /* Reducido de 3rem 1rem a 2.4rem 0.8rem (-20%) */
+}
+
+.error-icon {
+  font-size: 2.4rem; /* Reducido de 3rem a 2.4rem (-20%) */
+  margin-bottom: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+}
+
+.profile-error h3 {
+  font-size: 1.2rem; /* Reducido de 1.5rem a 1.2rem (-20%) */
+  color: #2d3748;
+  margin-bottom: 0.4rem; /* Reducido de 0.5rem a 0.4rem (-20%) */
+}
+
+.profile-error p {
+  color: #64748b;
+  margin-bottom: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+}
+
+/* Header de edición */
+.edit-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  margin-bottom: 1.6rem; /* Reducido de 2rem a 1.6rem (-20%) */
+  padding-bottom: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: #f1f5f9;
+  color: #8463f9;
+}
+
+.edit-header h1 {
+  font-size: 1.4rem; /* Reducido de 1.75rem a 1.4rem (-20%) */
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+/* Formulario de edición */
+.edit-form {
+  display: grid;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem; /* Reducido de 0.5rem a 0.4rem (-20%) */
+}
+
+.form-label {
+  font-size: 0.7rem; /* Reducido de 0.875rem a 0.7rem (-20%) */
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-input {
+  padding: 0.6rem 0.8rem; /* Reducido de 0.75rem 1rem a 0.6rem 0.8rem (-20%) */
+  border: 2px solid #e5e7eb;
+  border-radius: 6.4px; /* Reducido de 8px a 6.4px (-20%) */
+  font-size: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #8463f9;
+  box-shadow: 0 0 0 3px rgba(132, 99, 249, 0.1);
+}
+
+.form-input.error {
+  border-color: #ef4444;
+}
+
+.form-input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.field-error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.field-help {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+/* Acciones del formulario */
+.form-actions {
+  display: flex;
+  gap: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  justify-content: flex-end;
+  margin-top: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  padding-top: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  border-top: 1px solid #e2e8f0;
+}
+
+.form-actions button {
+  padding: 0.6rem 1.2rem; /* Reducido de 0.75rem 1.5rem a 0.6rem 1.2rem (-20%) */
+  font-weight: 600;
+  border-radius: 6.4px; /* Reducido de 8px a 6.4px (-20%) */
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 9.6px; /* Reducido de 12px a 9.6px (-20%) */
+  width: 90%;
+  max-width: 400px; /* Reducido de 500px a 400px (-20%) */
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem; /* Reducido de 1.5rem a 1.2rem (-20%) */
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h3 {
+  font-size: 1rem; /* Reducido de 1.25rem a 1rem (-20%) */
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem; /* Reducido de 1.5rem a 1.2rem (-20%) */
+  color: #64748b;
+  cursor: pointer;
+  padding: 0.2rem; /* Reducido de 0.25rem a 0.2rem (-20%) */
+  border-radius: 3.2px; /* Reducido de 4px a 3.2px (-20%) */
+  transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+  background: #f1f5f9;
+  color: #2d3748;
+}
+
+.modal-body {
+  padding: 1.2rem; /* Reducido de 1.5rem a 1.2rem (-20%) */
+}
+
+.modal-body p {
+  margin-bottom: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  color: #374151;
+}
+
+.warning-text {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  justify-content: flex-end;
+  padding: 1.2rem; /* Reducido de 1.5rem a 1.2rem (-20%) */
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Spinner */
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1rem 0.5rem;
+  }
+
+  .profile-card,
+  .profile-edit-card {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .edit-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .btn-back {
+    align-self: flex-start;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-container {
+    padding: 0.5rem;
+  }
+
+  .profile-card,
+  .profile-edit-card {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .profile-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .edit-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Avatar Upload Styles */
+.avatar-edit-section {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.avatar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.current-avatar {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e2e8f0;
+}
+
+.avatar-letter {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #8463f9 0%, #6d4aff 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.avatar-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #4b5563;
+  transform: translateY(-1px);
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.btn-text:hover {
+  color: #dc2626;
+  text-decoration: underline;
+}
+
+.upload-progress {
+  margin-top: 1rem;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8463f9, #6d4aff);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.progress-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Icon styles */
+.icon-camera::before {
+  content: "📷";
+  margin-right: 0.25rem;
+}
+
+.icon-save::before {
+  content: "💾";
+  margin-right: 0.25rem;
+}
+
+.icon-edit::before {
+  content: "✏️";
+  margin-right: 0.25rem;
+}
+
+.icon-delete::before {
+  content: "🗑️";
+  margin-right: 0.25rem;
+}
+
+.icon-key::before {
+  content: "🔑";
+  margin-right: 0.25rem;
+}
+
+.icon-arrow-down::before {
+  content: "▼";
+  margin-right: 0.25rem;
+}
+
+.icon-close::before {
+  content: "✕";
+  margin-right: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .avatar-edit-section {
+    margin: 1rem 0;
+    padding: 1rem;
+  }
+
+  .current-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .avatar-letter {
+    font-size: 1.75rem;
+  }
+
+  /* Mejoras responsive para móviles */
+  .profile-container {
+    padding: 2rem 0rem;
+    min-height: calc(100vh - 60px);
+  }
+
+  .profile-card {
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .navigation-header {
+    margin-bottom: 1rem;
+  }
+
+  .btn-back {
+    width: 100%;
+    justify-content: center;
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .profile-header {
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .profile-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .profile-info {
+    gap: 1.25rem;
+  }
+
+  /* En móviles, las grillas se convierten en una sola columna */
+  .profile-grid-names {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .profile-grid-contact {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .info-group-age {
+    max-width: none;
+  }
+
+  .info-input-age {
+    max-width: none;
+  }
+
+  .info-value {
+    font-size: 1rem;
+    padding: 0.625rem 0.875rem;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .profile-actions .btn-primary,
+  .profile-actions .btn-danger {
+    width: 100%;
+    justify-content: center;
+    padding: 0.875rem 1rem;
+  }
+}
+
+/* Estilos específicos para los campos del profile */
+.info-input-email {
+  width: 100%;
+}
+
+.info-input-age {
+  width: 100%;
+  max-width: 180px; /* Limita el ancho del campo edad en desktop */
+}
+
+/* Todos los inputs tienen 100% de ancho dentro de su contenedor */
+#profile-first-name,
+#profile-last-name,
+#profile-email,
+#profile-age {
+  width: 100%;
+}
+
+/* Estilos para que los inputs de cambiar contraseña tengan 100% de ancho */
+.password-section .form-input {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+.password-section .password-field-container {
+  width: 100%;
+}
+
+.password-section .password-field-container input {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Estilos para desktop (pantallas grandes) */
+@media (min-width: 768px) {
+  .profile-container {
+    padding: 2.5rem 0.75rem;
+    max-width: 1500px;
+  }
+
+  .profile-card {
+    padding: 2.5rem;
+  }
+
+  .btn-back {
+    width: auto;
+    max-width: 200px;
+  }
+
+  /* Las grillas mantienen su estructura en desktop */
+  .profile-grid-names {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .profile-grid-contact {
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+  }
+
+  .info-group-age {
+    max-width: 200px;
+  }
+
+  .profile-actions {
+    flex-direction: row;
+    justify-content: center;
+    max-width: 400px;
+    margin: 2rem auto 0;
+  }
+
+  .profile-actions .btn-primary,
+  .profile-actions .btn-danger {
+    width: auto;
+    min-width: 140px;
+  }
+}
+
+/* Estilos para pantallas muy grandes */
+@media (min-width: 1200px) {
+  .profile-container {
+    max-width: 1000px;
+    padding: 3rem 2rem;
+  }
+
+  .profile-card {
+    padding: 3rem;
+  }
+
+  .profile-header h1 {
+    font-size: 2.25rem;
+  }
+
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+    font-size: 2.25rem;
+  }
+}
+
+/* ================================ */
+/* ESTILOS PARA PROFILE-EDIT */
+/* ================================ */
+
+/* Layout principal de profile-edit */
+.profile-edit-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  position: relative;
+}
+
+/* Header de navegación mejorado */
+.navigation-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.navigation-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 1rem 0 0 0;
+}
+
+/* Sección de avatar en profile-edit */
+.profile-avatar-section {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.profile-avatar-section .profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8463f9, #b53ee3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+}
+
+/* Layout de dos columnas */
+.edit-columns {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr;
+}
+
+/* Columnas individuales */
+.edit-column {
+  width: 100%;
+}
+
+/* Ajustes para las tarjetas de edición */
+.profile-edit-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.profile-edit-card h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+}
+
+/* Media queries para responsive */
+@media (min-width: 768px) {
+  .profile-edit-main {
+    padding: 2rem;
+  }
+
+  .navigation-header {
+    text-align: left;
+  }
+
+  .navigation-header h1 {
+    font-size: 2.25rem;
+  }
+
+  .edit-columns {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+
+  .profile-edit-card {
+    padding: 2rem;
+    margin-bottom: 0;
+  }
+
+  .profile-avatar-section .profile-avatar {
+    width: 90px;
+    height: 90px;
+    font-size: 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .profile-edit-main {
+    padding: 2.5rem;
+  }
+
+  .edit-columns {
+    gap: 3rem;
+  }
+
+  .profile-edit-card {
+    padding: 2.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .profile-edit-main {
+    padding: 3rem;
+  }
+
+  .navigation-header h1 {
+    font-size: 2.5rem;
+  }
+}
+
+/* ================================ */
+/* ESTILOS PARA CONTENEDOR DE FONDO */
+/* ================================ */
+
+/* Wrapper con fondo para todo el contenido */
+.edit-content-wrapper {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ================================ */
+/* ESTILOS PARA ENLACE DE CONTRASEÑA */
+/* ================================ */
+
+/* Tarjeta del enlace de contraseña */
+.password-link-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Botón enlace de contraseña */
+.btn-link-password {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 0.75rem;
+}
+
+.btn-link-password:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-link-password:active {
+  transform: translateY(0);
+}
+
+.btn-link-password .icon-key::before {
+  content: "🔑";
+  font-size: 1.1rem;
+}
+
+.btn-link-password .icon-arrow-down::before {
+  content: "▼";
+  font-size: 0.8rem;
+}
+
+/* Descripción del enlace */
+.password-link-description {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ================================ */
+/* ESTILOS PARA FORMULARIO DE CONTRASEÑA COMPACTO */
+/* ================================ */
+
+/* Tarjeta del formulario de contraseña */
+.password-form-card {
+  margin-bottom: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  max-height: 320px; /* Reducido de 400px a 320px (-20%) */
+  overflow-y: auto;
+}
+
+/* Header del formulario con botón cerrar */
+.password-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem; /* Reducido de 1.5rem a 1.2rem (-20%) */
+  padding-bottom: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.password-form-header h2 {
+  margin: 0;
+  font-size: 1.2rem; /* Reducido de 1.5rem a 1.2rem (-20%) */
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Botón cerrar */
+.btn-close {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  width: 25.6px; /* Reducido de 32px a 25.6px (-20%) */
+  height: 25.6px; /* Reducido de 32px a 25.6px (-20%) */
+  border-radius: 6.4px; /* Reducido de 8px a 6.4px (-20%) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.btn-close .icon-close::before {
+  content: "✕";
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Formulario compacto */
+.password-form-card .edit-form {
+  max-height: 240px; /* Reducido de 300px a 240px (-20%) */
+  overflow-y: auto;
+}
+
+.password-form-card .form-field {
+  margin-bottom: 0.8rem; /* Reducido de 1rem a 0.8rem (-20%) */
+}
+
+.password-form-card .form-field:last-of-type {
+  margin-bottom: 1.2rem; /* Reducido de 1.5rem a 1.2rem (-20%) */
+}
+
+/* Media queries para responsive */
+@media (min-width: 768px) {
+  .edit-content-wrapper {
+    padding: 2rem;
+  }
+
+  .password-link-card {
+    padding: 2rem;
+  }
+
+  .password-form-card {
+    max-height: 450px;
+  }
+
+  .password-form-card .edit-form {
+    max-height: 350px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .edit-content-wrapper {
+    padding: 2.5rem;
+  }
+
+  .password-form-card {
+    max-height: 500px;
+  }
+
+  .password-form-card .edit-form {
+    max-height: 400px;
+  }
+}

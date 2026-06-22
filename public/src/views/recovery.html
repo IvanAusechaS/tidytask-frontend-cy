@@ -1,0 +1,62 @@
+<link rel="stylesheet" href="/src/assets/styles/forms.css" />
+<link rel="stylesheet" href="/src/assets/styles/toast.css" />
+<link rel="stylesheet" href="/src/assets/styles/spinners.css" />
+<link rel="stylesheet" href="/src/assets/styles/logo.css" />
+<link rel="stylesheet" href="/src/assets/styles/login-signup.css" />
+<link rel="stylesheet" href="/src/assets/styles/animations.css" />
+
+<div class="login-container">
+  <div class="auth-card">
+    <div class="image-section">
+      <img
+        src="/src/assets/content/wallpaper.svg"
+        alt="Imagen de recuperación"
+        class="wall-image"
+      />
+    </div>
+
+    <div class="form-section">
+      <div class="logo-container">
+        <img
+          src="/src/assets/content/logo-tidytasks.png"
+          alt="Logo de TidyTasks"
+          class="app-logo"
+        />
+        <h2 class="logo-text">TidyTasks</h2>
+      </div>
+
+      <h1>Recupera tu contraseña</h1>
+      <span
+        >Ingresa tu correo para recibir las instrucciones de recuperación</span
+      >
+
+      <form id="recovery-form" method="POST" class="login-form">
+        <div class="form-field">
+          <label class="form-label" for="email">Correo electrónico</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Ingresa tu correo electrónico"
+            required
+          />
+          <div id="email-error" class="tooltip-error"></div>
+        </div>
+
+        <button
+          type="submit"
+          id="recovery-button"
+          class="login-button shine-animation"
+        >
+          <span id="button-text">Enviar enlace de recuperación</span>
+          <span id="spinner" class="spinner hidden"></span>
+        </button>
+      </form>
+
+      <div class="sign-up">
+        <span>¿Recordaste tu contraseña?</span>
+        <a href="#" id="go-login" class="float-animation">Iniciar sesión</a>
+      </div>
+    </div>
+  </div>
+</div>

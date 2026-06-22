@@ -1,0 +1,136 @@
+/* Estilos para páginas de autenticación y callback */
+@import "variables.css";
+
+/* Estilos para la página de respuesta JSON */
+.auth-callback-page {
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color, #8a64c0)
+  );
+  padding: 20px;
+  margin: 0;
+  color: var(--text-dark);
+}
+
+.auth-container {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 100%;
+}
+
+.auth-container h1 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+}
+
+.auth-container p {
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.data-display {
+  background: #f7f9fc;
+  border-radius: 6px;
+  padding: 15px;
+  margin-top: 20px;
+  text-align: left;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 1024px) {
+  .auth-container {
+    max-width: 450px;
+    padding: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-callback-page {
+    padding: 15px;
+  }
+  
+  .auth-container {
+    max-width: 400px;
+    padding: 20px;
+  }
+  
+  .auth-container h1 {
+    font-size: 1.6rem;
+  }
+  
+  .auth-container p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-callback-page {
+    padding: 10px;
+  }
+  
+  .auth-container {
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .auth-container h1 {
+    font-size: 1.4rem;
+  }
+  
+  .auth-container p {
+    font-size: 0.9rem;
+  }
+  
+  .data-display {
+    padding: 10px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .auth-container {
+    padding: 12px;
+    border-radius: 6px;
+  }
+  
+  .auth-container h1 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .auth-container p {
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+  }
+  
+  .data-display {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 8px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Estilos para contenedor de autenticación exitosa */
+.auth-success-container {
+  text-align: center;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  max-width: 500px;
+}

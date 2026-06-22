@@ -1,0 +1,87 @@
+<link rel="stylesheet" href="/src/assets/styles/forms.css" />
+<link rel="stylesheet" href="/src/assets/styles/toast.css" />
+<link rel="stylesheet" href="/src/assets/styles/spinners.css" />
+<link rel="stylesheet" href="/src/assets/styles/logo.css" />
+<link rel="stylesheet" href="/src/assets/styles/login-signup.css" />
+<link rel="stylesheet" href="/src/assets/styles/animations.css" />
+
+<div class="login-container">
+  <div class="auth-card">
+    <div class="image-section">
+      <img
+        src="/src/assets/content/wallpaper.svg"
+        alt="Imagen de restablecimiento"
+        class="wall-image"
+      />
+    </div>
+
+    <div class="form-section">
+      <div class="logo-container">
+        <img
+          src="/src/assets/content/logo-tidytasks.png"
+          alt="Logo de TidyTasks"
+          class="app-logo"
+        />
+        <h2 class="logo-text">TidyTasks</h2>
+      </div>
+
+      <h1>Restablece tu contraseña</h1>
+      <span>Por favor ingresa tu nueva contraseña</span>
+
+      <form id="reset-password-form" method="POST" class="login-form">
+        <div class="form-field">
+          <label class="form-label" for="new-password">Nueva contraseña</label>
+          <div class="password-field-container">
+            <input
+              type="password"
+              id="new-password"
+              name="new-password"
+              placeholder="Mín. 8 caracteres con mayúscula, minúscula y número"
+              required
+              minlength="8"
+              aria-describedby="password-requirements"
+            />
+          </div>
+          <div id="new-password-error" class="tooltip-error"></div>
+          <div id="password-requirements" class="password-requirements">
+            La contraseña debe contener al menos 8 caracteres, incluyendo
+            mayúscula, minúscula, número y carácter especial.
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="confirm-password"
+            >Confirmar contraseña</label
+          >
+          <div class="password-field-container">
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              placeholder="Confirma tu nueva contraseña"
+              required
+              minlength="8"
+            />
+          </div>
+          <div id="confirm-password-error" class="tooltip-error"></div>
+        </div>
+
+        <input type="hidden" id="reset-token" name="token" />
+
+        <button
+          type="submit"
+          id="reset-button"
+          class="login-button shine-animation"
+        >
+          <span id="button-text">Restablecer contraseña</span>
+          <span id="spinner" class="spinner hidden"></span>
+        </button>
+      </form>
+
+      <div class="sign-up">
+        <span>¿Recordaste tu contraseña?</span>
+        <a href="#" id="go-login" class="float-animation">Iniciar sesión</a>
+      </div>
+    </div>
+  </div>
+</div>

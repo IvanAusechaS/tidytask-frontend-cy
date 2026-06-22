@@ -1,0 +1,96 @@
+@import "variables.css";
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  scroll-behavior: smooth;
+  text-decoration: none;
+  list-style: none;
+  outline: none;
+  border: none;
+  transition: var(--transition-speed);
+}
+
+/* Layout principal */
+body {
+  min-height: 100vh;
+  background: var(--primary-gradient);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  overflow-x: hidden; /* Evitar scroll horizontal */
+}
+
+/* Responsive Design - Base */
+@media (max-width: 1024px) {
+  body {
+    display: flex; /* Mantener flex en 1024px como recomendado */
+  }
+
+  .login-container {
+    max-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    display: block; /* Cambiar a block para 768px y menos como recomendado */
+  }
+
+  .login-container {
+    flex-direction: column;
+    max-width: 500px;
+    min-height: auto;
+  }
+
+  .image-section {
+    min-height: 300px;
+    order: 1;
+  }
+
+  .form-section {
+    order: 2;
+    padding: var(--spacing-xl) var(--spacing-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 40px 1px 1px; /* Padding aún más pequeño para móviles */
+  }
+
+  .login-container {
+    border-radius: 5px;
+  }
+
+  .image-section {
+    min-height: 180px;
+  }
+
+  .form-section {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+}
+
+/* Agregando media query para pantallas aún más pequeñas */
+@media (max-width: 320px) {
+  body {
+    padding: 60px 1px 1px; /* Padding mínimo */
+  }
+
+  .login-container {
+    border-radius: 3px;
+    margin: 0;
+  }
+
+  .form-section {
+    padding: var(--spacing-sm) var(--spacing-xs);
+  }
+
+  .image-section {
+    min-height: 150px;
+  }
+}

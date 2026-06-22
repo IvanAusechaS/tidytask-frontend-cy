@@ -1,0 +1,147 @@
+<link rel="stylesheet" href="/src/assets/styles/forms.css" />
+<link rel="stylesheet" href="/src/assets/styles/toast.css" />
+<link rel="stylesheet" href="/src/assets/styles/spinners.css" />
+<link rel="stylesheet" href="/src/assets/styles/logo.css" />
+<link rel="stylesheet" href="/src/assets/styles/login-signup.css" />
+<link rel="stylesheet" href="/src/assets/styles/animations.css" />
+
+<div class="login-container">
+  <div class="auth-card">
+    <div class="image-section">
+      <img
+        src="/src/assets/content/wallpaper.svg"
+        alt="Imagen de registro"
+        class="wall-image"
+      />
+    </div>
+
+    <div class="form-section">
+      <div class="logo-container">
+        <img
+          src="/src/assets/content/logo-tidytasks.png"
+          alt="Logo de TidyTasks"
+          class="app-logo"
+        />
+        <h2 class="logo-text">TidyTasks</h2>
+      </div>
+
+      <h1>Crea tu cuenta</h1>
+      <span>Únete a nuestra plataforma de gestión de tareas</span>
+      <!--  
+      <button type="button" class="google-login pulse-animation">
+        <img src="/src/assets/content/google-icon.png" alt="Google" />
+        <span>Registrarse con Google</span>
+      </button>
+
+      <div class="divider">
+        <span>------ o regístrate con email ------</span>
+      </div>
+      -->
+      <form id="signup-form" method="POST" class="login-form">
+        <div class="form-field">
+          <label class="form-label" for="firstName">Nombre</label>
+          <input
+            type="text"
+            id="firstName"
+            name="firstName"
+            placeholder="Ingresa tu nombre"
+            required
+          />
+          <div class="tooltip-error" id="firstName-error"></div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="lastName">Apellido</label>
+          <input
+            type="text"
+            id="lastName"
+            name="lastName"
+            placeholder="Ingresa tu apellido"
+            required
+          />
+          <div class="tooltip-error" id="lastName-error"></div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="email">Correo electrónico</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Ingresa tu correo electrónico"
+            required
+          />
+          <div class="tooltip-error" id="email-error"></div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="age">Edad</label>
+          <input
+            type="number"
+            id="age"
+            name="age"
+            placeholder="Ingresa tu edad (mínimo 13)"
+            min="13"
+            required
+          />
+          <div class="tooltip-error" id="age-error"></div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="password">Contraseña</label>
+          <div class="password-field-container">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Mín. 8 caracteres con mayúsculas, números y símbolos"
+              required
+              minlength="8"
+            />
+          </div>
+          <div class="tooltip-error" id="password-error"></div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="confirmPassword"
+            >Confirmar Contraseña</label
+          >
+          <div class="password-field-container">
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Confirma tu contraseña"
+              required
+              minlength="8"
+            />
+          </div>
+          <div class="tooltip-error" id="confirmPassword-error"></div>
+        </div>
+
+        <button
+          type="submit"
+          id="signup-button"
+          class="login-button shine-animation"
+        >
+          <span id="button-text">Crear Cuenta</span>
+          <div id="spinner" class="spinner hidden"></div>
+        </button>
+      </form>
+
+      <div class="sign-up">
+        <span>¿Ya tienes una cuenta?</span>
+        <a href="#" id="go-login" class="float-animation">Iniciar sesión</a>
+      </div>
+      <div class="back-to-home" style="text-align: center; margin-top: 20px">
+        <a
+          href="#"
+          id="go-home"
+          class="float-animation"
+          style="color: #8463f9; text-decoration: none; font-weight: 500"
+          >Volver al Home</a
+        >
+      </div>
+    </div>
+  </div>
+</div>

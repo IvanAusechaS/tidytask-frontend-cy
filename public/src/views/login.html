@@ -1,0 +1,98 @@
+<link rel="stylesheet" href="/src/assets/styles/forms.css" />
+<link rel="stylesheet" href="/src/assets/styles/toast.css" />
+<link rel="stylesheet" href="/src/assets/styles/spinners.css" />
+<link rel="stylesheet" href="/src/assets/styles/logo.css" />
+<link rel="stylesheet" href="/src/assets/styles/login-signup.css" />
+<link rel="stylesheet" href="/src/assets/styles/animations.css" />
+
+<div class="login-container">
+  <div class="auth-card">
+    <div class="image-section">
+      <img
+        src="/src/assets/content/wallpaper.svg"
+        alt="Imagen de bienvenida"
+        class="wall-image"
+      />
+    </div>
+
+    <div class="form-section">
+      <div class="logo-container">
+        <img
+          src="/src/assets/content/logo-tidytasks.png"
+          alt="Logo de TidyTasks"
+          class="app-logo"
+        />
+        <h2 class="logo-text">TidyTasks</h2>
+      </div>
+
+      <h1>Inicia sesión en tu cuenta</h1>
+      <span>Consulta lo que está sucediendo con tu negocio</span>
+
+      <!-- Botón para inicio de sesión con google comentado porque no se va a usar -->
+      <!-- PENDIENTE eliminación del código -->
+      <!-- <button type="button" class="google-login pulse-animation">
+        <img src="/src/assets/content/google-icon.png" alt="Google" />
+        <span>Continuar con Google</span>
+      </button>
+
+      <div class="divider">
+        <span>------ o inicia sesión con email ------</span>
+      </div> -->
+
+      <form id="login-form" method="POST" class="login-form">
+        <div class="form-field">
+          <label class="form-label" for="email">Correo electrónico</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Ingresa tu correo electrónico"
+            required
+          />
+          <div id="email-error" class="tooltip-error"></div>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label" for="password">Contraseña</label>
+          <div class="password-field-container">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Ingresa tu contraseña"
+              required
+            />
+          </div>
+          <div id="password-error" class="tooltip-error"></div>
+        </div>
+
+        <div class="remember-me">
+          <a href="#" id="go-recovery">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button
+          type="submit"
+          id="login-button"
+          class="login-button shine-animation"
+        >
+          <span id="button-text">Iniciar sesión</span>
+          <span id="spinner" class="spinner hidden"></span>
+        </button>
+      </form>
+
+      <div class="sign-up">
+        <span>¿No tienes una cuenta?</span>
+        <a href="#" id="go-signup" class="float-animation">Regístrate</a>
+      </div>
+      <div class="back-to-home" style="text-align: center; margin-top: 20px">
+        <a
+          href="#"
+          id="go-home"
+          class="float-animation"
+          style="color: #8463f9; text-decoration: none; font-weight: 500"
+          >Volver al Home</a
+        >
+      </div>
+    </div>
+  </div>
+</div>

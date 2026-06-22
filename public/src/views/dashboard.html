@@ -1,0 +1,387 @@
+<link rel="stylesheet" href="/src/assets/styles/logo.css" />
+<link rel="stylesheet" href="/src/assets/styles/adaptive-kanban.css" />
+<link rel="stylesheet" href="/src/assets/styles/animations.css" />
+<link rel="stylesheet" href="/src/assets/styles/calendar.css" />
+
+<style>
+  body {
+    padding-top: 20px;
+  }
+</style>
+
+<header class="app-header">
+  <div class="user-avatar" id="user-avatar-container">
+    <span id="user-avatar-letter">A</span>
+  </div>
+  <div class="user-display">
+    <span id="user-name">Nombre de usuario</span>
+  </div>
+
+  <!-- Botón hamburguesa -->
+  <button class="hamburger-btn" id="hamburger-btn" aria-label="Menú">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+
+  <!-- Menú de navegación -->
+  <nav class="header-nav" id="header-nav">
+    <div class="header-actions">
+      <button id="mobile-profile-button" class="btn-secondary btn-float">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        Mi perfil
+      </button>
+      <button id="mobile-logout-button" class="btn-primary btn-float">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16,17 21,12 16,7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Cerrar sesión
+      </button>
+    </div>
+  </nav>
+</header>
+
+<div class="dashboard-container">
+  <!-- Contenedor principal con borde redondeado -->
+  <div class="tasks-main-card">
+    <!-- Sección de título y conteo de tareas con botón de nueva tarea -->
+    <div class="tasks-header">
+      <div class="tasks-title-section">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+          "
+        >
+          <div>
+            <h1>Mis tareas</h1>
+            <span id="task-counter">0 tareas creadas</span>
+          </div>
+          <div>
+            <div class="header-buttons">
+              <button
+                id="view-toggle-button"
+                class="view-toggle-button pulse-animation"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span id="view-toggle-text">Mirar Calendario</span>
+              </button>
+              <button
+                id="new-task-button"
+                class="new-task-button pulse-animation"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Crear tarea
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="new-task-button-container" style="display: none">
+        <!-- Contenedor oculto mantenido para compatibilidad con el JS existente -->
+      </div>
+    </div>
+    <!-- Contenedor de tareas principal - puede cambiar según el estado -->
+    <div id="tasks-main-container">
+      <!-- Estado vacío: se muestra cuando no hay tareas -->
+      <div id="empty-state" class="tasks-empty-state">
+        <div class="empty-state-icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
+        <h2>¡Comienza creando tu primera tarea!</h2>
+        <p>Organiza tu trabajo y mantén un seguimiento de tus actividades.</p>
+        <button
+          id="create-first-task"
+          class="create-task-button pulse-animation"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Crear nueva tarea
+        </button>
+      </div>
+
+      <!-- Estado con tareas: se muestra cuando hay al menos una tarea (kanban) -->
+      <div id="kanban-board" class="kanban-board" style="display: none">
+        <!-- Navegación por tabs para móvil -->
+        <div id="adaptive-tabs" class="adaptive-tabs">
+          <button class="adaptive-tab-button active" data-column="todo">
+            Por hacer
+            <span class="adaptive-tab-count" id="todo-tab-count">0</span>
+          </button>
+          <button class="adaptive-tab-button" data-column="doing">
+            En proceso
+            <span class="adaptive-tab-count" id="doing-tab-count">0</span>
+          </button>
+          <button class="adaptive-tab-button" data-column="done">
+            Completado
+            <span class="adaptive-tab-count" id="done-tab-count">0</span>
+          </button>
+        </div>
+
+        <!-- Columna "To Do" -->
+        <div class="kanban-column todo-column">
+          <div class="column-header">
+            <h2>Por hacer</h2>
+            <div class="column-actions">
+              <span class="task-count" id="todo-count">0</span>
+              <button
+                class="btn-delete-all"
+                data-column="todo"
+                title="Eliminar todas las tareas de esta columna"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path
+                    d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"
+                  ></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="todo-tasks" class="tasks-container">
+            <!-- Aquí se agregarán dinámicamente las tareas "por hacer" -->
+          </div>
+          <div class="column-footer">
+            <span class="counter" id="todo-counter">0</span>
+            <span>Por hacer</span>
+          </div>
+        </div>
+
+        <!-- Columna "Doing" -->
+        <div class="kanban-column doing-column">
+          <div class="column-header">
+            <h2>En proceso</h2>
+            <div class="column-actions">
+              <span class="task-count" id="doing-count">0</span>
+              <button
+                class="btn-delete-all"
+                data-column="doing"
+                title="Eliminar todas las tareas de esta columna"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path
+                    d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"
+                  ></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="doing-tasks" class="tasks-container">
+            <!-- Aquí se agregarán dinámicamente las tareas "haciendo" -->
+          </div>
+          <div class="column-footer">
+            <span class="counter" id="doing-counter">0</span>
+            <span>En proceso</span>
+          </div>
+        </div>
+
+        <!-- Columna "Done" -->
+        <div class="kanban-column done-column">
+          <div class="column-header">
+            <h2>Completado</h2>
+            <div class="column-actions">
+              <span class="task-count" id="done-count">0</span>
+              <button
+                class="btn-delete-all"
+                data-column="done"
+                title="Eliminar todas las tareas de esta columna"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path
+                    d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"
+                  ></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="done-tasks" class="tasks-container">
+            <!-- Aquí se agregarán dinámicamente las tareas "hecho" -->
+          </div>
+          <div class="column-footer">
+            <span class="counter" id="done-counter">0</span>
+            <span>Completado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear/editar tarea -->
+<div id="task-modal" class="modal" style="display: none">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">Nueva Tarea</h2>
+      <button id="close-modal" class="close-modal">&times;</button>
+    </div>
+    <form id="task-form">
+      <div
+        id="form-error-live"
+        class="form-error-live"
+        aria-live="polite"
+      ></div>
+      <div class="form-group">
+        <label for="task-title">Título</label>
+        <input
+          type="text"
+          id="task-title"
+          name="title"
+          placeholder="Ingresa el título de la tarea"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="task-detail">Descripción</label>
+        <textarea
+          id="task-detail"
+          name="detail"
+          placeholder="Ingresa la descripción de la tarea"
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="task-date">Fecha límite</label>
+        <input type="date" id="task-date" name="date" required />
+      </div>
+      <div class="form-group">
+        <label for="task-time">Hora límite (opcional)</label>
+        <input type="time" id="task-time" name="time" />
+      </div>
+      <div class="form-group">
+        <label for="task-status">Estado</label>
+        <select id="task-status" name="status">
+          <option value="Por hacer">Por hacer</option>
+          <option value="Haciendo">En proceso</option>
+          <option value="Hecho">Completado</option>
+        </select>
+      </div>
+      <input type="hidden" id="task-id" name="id" />
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="submit-button shine-animation"
+          id="save-task-button"
+        >
+          Guardar Tarea
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

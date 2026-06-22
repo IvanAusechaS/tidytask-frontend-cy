@@ -1,0 +1,24 @@
+{
+  "name": "tidytask-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Interfaz de usuario para TidyTask - Gestor de tareas",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "frontend",
+    "vite",
+    "javascript",
+    "tasks",
+    "ui"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^7.1.2"
+  }
+}
