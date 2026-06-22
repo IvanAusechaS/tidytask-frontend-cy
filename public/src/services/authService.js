@@ -9,11 +9,11 @@ import { post } from "./api.js";
 const getApiBaseUrl = () => {
   const isProduction = window.location.hostname !== "localhost";
   return isProduction
-    ? "https://tidytasks-80b95fdaeb61.herokuapp.com/api"
+    ? "https://tidytask-backend-154w.onrender.com"
     : "http://localhost:3001/api";
 };
 
-const API_BASE_URL = "https://tidytasks-80b95fdaeb61.herokuapp.com/api";
+const API_BASE_URL = "https://tidytask-backend-154w.onrender.com";
 
 /**
  * Log in a user with email and password
