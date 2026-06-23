@@ -64,7 +64,7 @@ export default function setupLogin() {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
           toast.warning(
-            "Tu sesión ha expirado. Por favor, inicia sesión de nuevo."
+            "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
           );
         }
       } catch (e) {
@@ -119,7 +119,7 @@ export default function setupLogin() {
       showError(
         input,
         errorElement,
-        "Por favor, ingresa un correo electrónico válido"
+        "Por favor, ingresa un correo electrónico válido",
       );
       return false;
     }
@@ -203,31 +203,32 @@ export default function setupLogin() {
       spinner.classList.add("hidden");
       submitButton.disabled = false;
 
-      // Manejar errores específicos según el código HTTP
-      if (err.message && err.message.includes("401")) {
+      const status = err.status;
+
+      if (status === 401) {
         showError(emailInput, emailError, "Correo o contraseña inválidos");
         showError(
           passwordInput,
           passwordError,
-          "Correo o contraseña inválidos"
+          "Correo o contraseña inválidos",
         );
         toast.error("Correo o contraseña inválidos");
-      } else if (err.message && err.message.includes("423")) {
+      } else if (status === 423) {
         toast.error("Cuenta temporalmente bloqueada");
-      } else if (err.message && err.message.includes("429")) {
+      } else if (status === 429) {
         toast.error(
-          "Demasiados intentos de inicio de sesión. Inténtalo más tarde."
+          "Demasiados intentos de inicio de sesión. Inténtalo más tarde.",
         );
-      } else if (err.message && /5\d\d/.test(err.message)) {
-        // Error 5xx - Error del servidor
+      } else if (status >= 500) {
         toast.error("Error del servidor. Por favor, inténtalo más tarde");
 
-        // En modo dev, mostrar en consola
-        if (process.env.NODE_ENV !== "production") {
+        if (import.meta.env.MODE !== "production") {
           console.error("Server error details:", err);
         }
       } else {
-        toast.error("Ocurrió un error. Por favor, inténtalo de nuevo.");
+        toast.error(
+          err.message || "Ocurrió un error. Por favor, inténtalo de nuevo.",
+        );
       }
     }
   });

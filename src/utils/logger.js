@@ -20,9 +20,13 @@
  *   logger.appError('create_task', { taskId: '...', error: err.message });
  */
 
-const APP_ENV = import.meta.env.VITE_APP_ENV || import.meta.env.MODE || 'development';
+const APP_ENV =
+  import.meta?.env?.VITE_APP_ENV ||
+  import.meta?.env?.MODE ||
+  'development';
 const SERVICE_NAME = 'tidytask-frontend';
 const IS_PRODUCTION = APP_ENV === 'production';
+
 
 /**
  * Retorna el userId desde localStorage.

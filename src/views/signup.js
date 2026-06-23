@@ -90,7 +90,7 @@ export default function setupSignup() {
         showError(
           input,
           errorElement,
-          "El nombre debe tener al menos 2 caracteres"
+          "El nombre debe tener al menos 2 caracteres",
         );
       }
       return false;
@@ -119,7 +119,7 @@ export default function setupSignup() {
         showError(
           input,
           errorElement,
-          "Por favor ingrese un correo electrónico válido"
+          "Por favor ingrese un correo electrónico válido",
         );
       }
       return false;
@@ -162,7 +162,7 @@ export default function setupSignup() {
         showError(
           input,
           errorElement,
-          "La edad debe ser menor o igual a 100 años"
+          "La edad debe ser menor o igual a 100 años",
         );
       }
       return false;
@@ -190,7 +190,7 @@ export default function setupSignup() {
         showError(
           input,
           errorElement,
-          "La contraseña debe tener al menos 8 caracteres"
+          "La contraseña debe tener al menos 8 caracteres",
         );
       }
       return false;
@@ -202,7 +202,7 @@ export default function setupSignup() {
         showError(
           input,
           errorElement,
-          "La contraseña debe contener al menos una letra mayúscula"
+          "La contraseña debe contener al menos una letra mayúscula",
         );
       }
       return false;
@@ -214,7 +214,7 @@ export default function setupSignup() {
         showError(
           input,
           errorElement,
-          "La contraseña debe contener al menos una letra minúscula"
+          "La contraseña debe contener al menos una letra minúscula",
         );
       }
       return false;
@@ -226,7 +226,7 @@ export default function setupSignup() {
         showError(
           input,
           errorElement,
-          "La contraseña debe contener al menos un número"
+          "La contraseña debe contener al menos un número",
         );
       }
       return false;
@@ -238,7 +238,7 @@ export default function setupSignup() {
         showError(
           input,
           errorElement,
-          "La contraseña debe contener al menos un carácter especial"
+          "La contraseña debe contener al menos un carácter especial",
         );
       }
       return false;
@@ -280,24 +280,24 @@ export default function setupSignup() {
     const isFirstNameValid = validateName(
       firstNameInput,
       firstNameError,
-      showErrors
+      showErrors,
     );
     const isLastNameValid = validateName(
       lastNameInput,
       lastNameError,
-      showErrors
+      showErrors,
     );
     const isEmailValid = validateEmail(emailInput, emailError, showErrors);
     const isAgeValid = validateAge(ageInput, ageError, showErrors);
     const isPasswordValid = validatePassword(
       passwordInput,
       passwordError,
-      showErrors
+      showErrors,
     );
     const isConfirmPasswordValid = validateConfirmPassword(
       confirmPasswordInput,
       confirmPasswordError,
-      showErrors
+      showErrors,
     );
 
     return (
@@ -407,7 +407,7 @@ export default function setupSignup() {
 
       // Mostrar toast de éxito
       toast.success(
-        `¡Cuenta creada exitosamente! Bienvenido, ${res.user.firstName}!`
+        `¡Cuenta creada exitosamente! Bienvenido, ${res.user.firstName}!`,
       );
 
       // Esperar un momento y redireccionar al dashboard (no al login)
@@ -416,40 +416,29 @@ export default function setupSignup() {
       }, 300);
     } catch (err) {
       console.error("Signup error:", err);
-      console.error("Error message:", err.message);
 
-      // Restablecer botón
       buttonText.textContent = "Crear Cuenta";
       spinner.classList.add("hidden");
       submitButton.disabled = false;
 
-      // Manejar error específico para email ya registrado (409 Conflict)
-      if (
-        err.message &&
-        (err.message.includes("409") ||
-          err.message.toLowerCase().includes("already registered") ||
-          err.message
-            .toLowerCase()
-            .includes("this email is already registered"))
-      ) {
+      const status = err.status;
+
+      if (status === 409) {
         showError(emailInput, emailError, "Este email ya está registrado");
         toast.error(
-          "Este email ya está registrado. Por favor usa otro email o inicia sesión."
+          "Este email ya está registrado. Usa otro email o inicia sesión.",
         );
-      } else if (err.message && err.message.includes("500")) {
-        // Error del servidor
-        toast.error("Error del servidor. Por favor intente más tarde.");
+      } else if (status === 400) {
+        toast.error("Datos inválidos. Verifica la información ingresada.");
+      } else if (status >= 500) {
+        toast.error("Error del servidor. Intenta más tarde.");
 
-        // En modo dev, mostrar en consola
-        if (process.env.NODE_ENV !== "production") {
+        if (import.meta.env.MODE !== "production") {
           console.error("Server error details:", err);
         }
-      } else if (err.message && err.message.includes("400")) {
-        // Error de validación del servidor
-        toast.error("Datos inválidos. Por favor verifique su información.");
       } else {
         toast.error(
-          "Error al crear la cuenta. Por favor verifique su información e intente nuevamente."
+          err.message || "Error al crear la cuenta. Intenta nuevamente.",
         );
       }
     }
