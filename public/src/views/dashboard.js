@@ -5,6 +5,7 @@ import { get, post, put, del } from "../services/api.js";
 import toast from "../utils/toast.js";
 import { checkAuth } from "../utils/page-loader.js";
 import TaskCalendar from "../components/calendar.js";
+import logger from "../utils/logger.js";
 
 /**
  * Valida el formato de tiempo según especificaciones del backend
@@ -356,27 +357,24 @@ export default function setupDashboard() {
    */
   async function loadTasks(showLoadingIndicator = true) {
     try {
-      console.log("Cargando tareas del usuario...");
-
       if (!localStorage.getItem("token")) {
-        console.error("No hay token disponible para cargar tareas");
-        // Redirigir al login si no hay token
+        // WARN: intento de carga de tareas sin token de autenticacion.
+        logger.appError("load_tasks", {
+          severity: "WARN",
+          error: "No authentication token available",
+        });
         toast.error("Sesión expirada. Por favor inicie sesión nuevamente.");
         setTimeout(() => {
           navigateTo("login");
         }, 1000);
-        return; // Salir de la función para evitar errores
+        return;
       }
 
       if (showLoadingIndicator) {
         showSpinner();
       }
 
-      // Hacer la solicitud directamente sin timeout por ahora
       const response = await get("/tasks");
-      console.log("Respuesta completa del servidor:", response);
-      console.log("Tipo de respuesta:", typeof response);
-      console.log("¿Tiene propiedad tasks?:", response.hasOwnProperty("tasks"));
 
       if (showLoadingIndicator) {
         hideSpinner();
@@ -384,18 +382,11 @@ export default function setupDashboard() {
 
       if (response && response.tasks && Array.isArray(response.tasks)) {
         tasks = response.tasks;
-        console.log(`Se cargaron ${tasks.length} tareas:`, tasks);
         updateTaskCounter();
       } else if (response && Array.isArray(response)) {
-        // Por si el backend devuelve directamente el array
         tasks = response;
-        console.log(
-          `Se cargaron ${tasks.length} tareas (array directo):`,
-          tasks
-        );
         updateTaskCounter();
       } else {
-        console.warn("La respuesta no contiene tareas válidas:", response);
         tasks = [];
         updateTaskCounter();
       }
@@ -403,18 +394,17 @@ export default function setupDashboard() {
       // Configurar drag and drop después de cargar las tareas
       setupTaskDragListeners();
     } catch (error) {
-      console.error("Error loading tasks:", error);
+      // ERROR: fallo al cargar tareas del backend.
+      logger.appError("load_tasks", { error: error.message, severity: "ERROR" });
 
       if (showLoadingIndicator) {
         hideSpinner();
       }
 
-      // Si es un error de autenticación, intentar redirigir a login
       if (
         error.message.includes("Authentication") ||
         error.message.includes("401")
       ) {
-        console.log("Error de autenticación, redirigiendo a login");
         toast.error("Inicia sesión de nuevo");
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -1513,21 +1503,26 @@ export default function setupDashboard() {
    */
   async function createTask(taskData) {
     try {
-      // Simular un delay mínimo para el spinner (como máximo 2 segundos)
       const startTime = Date.now();
-
-      // Crear la tarea en el backend
       const response = await post("/tasks", taskData);
 
-      // Garantizar que el spinner se muestre por al menos 300ms para transiciones suaves
       const elapsedTime = Date.now() - startTime;
       if (elapsedTime < 300) {
         await new Promise((resolve) => setTimeout(resolve, 300 - elapsedTime));
       }
 
+      // INFO: tarea creada exitosamente desde el cliente.
+      // Necesidad: correlacionar evento de UI con el log de backend via userId.
+      logger.taskEvent("create_success", {
+        taskId: response?.task?._id || response?._id,
+        status: taskData.status,
+        deadline: taskData.date,
+      });
+
       return response;
     } catch (error) {
-      console.error("Error creating task:", error);
+      // ERROR: fallo al crear tarea en el cliente. Captura errores de red y de API.
+      logger.appError("create_task", { error: error.message });
       throw error;
     }
   }
@@ -1540,8 +1535,15 @@ export default function setupDashboard() {
   async function updateTask(taskId, taskData) {
     try {
       await put(`/tasks/${taskId}`, taskData);
+      // INFO: tarea actualizada exitosamente desde el cliente.
+      logger.taskEvent("update_success", {
+        taskId,
+        status: taskData.status,
+        deadline: taskData.date,
+      });
     } catch (error) {
-      console.error("Error updating task:", error);
+      // ERROR: fallo al actualizar tarea en el cliente.
+      logger.appError("update_task", { taskId, error: error.message });
       throw error;
     }
   }
@@ -1567,6 +1569,12 @@ export default function setupDashboard() {
     if (!confirmed) {
       return;
     }
+
+    // INFO: usuario confirmo la eliminacion de la tarea.
+    logger.taskEvent("delete_confirmed", {
+      taskId,
+      status: taskToDelete.status,
+    });
 
     let isUndone = false;
     let timeoutId = null;
@@ -1621,9 +1629,20 @@ export default function setupDashboard() {
             // Ocultar spinner
             hideSpinner();
 
+            // INFO: tarea eliminada definitivamente en el servidor.
+            logger.taskEvent("delete_success", {
+              taskId,
+              status: taskToDelete.status,
+            });
+
             toast.success("Tarea eliminada definitivamente");
           } catch (error) {
-            console.error("Error deleting task permanently:", error);
+            // ERROR: fallo al eliminar la tarea en el servidor.
+            logger.appError("delete_task", {
+              taskId,
+              error: error.message,
+              severity: "ERROR",
+            });
 
             // Ocultar spinner
             hideSpinner();
@@ -1646,7 +1665,8 @@ export default function setupDashboard() {
         }
       }, 5000);
     } catch (error) {
-      console.error("Error in delete task process:", error);
+      // ERROR: fallo inesperado en el proceso de eliminacion de tarea.
+      logger.appError("delete_task", { taskId, error: error.message, severity: "ERROR" });
 
       // Restaurar tarea en caso de error
       tasks.push(taskToDelete);
@@ -1755,7 +1775,11 @@ export default function setupDashboard() {
               `${tasksInColumn.length} tareas eliminadas definitivamente de "${columnName}"`
             );
           } catch (error) {
-            console.error("Error deleting all tasks permanently:", error);
+            // ERROR: fallo al eliminar masivamente tareas en el servidor.
+            logger.appError("delete_task_bulk", {
+              error: error.message,
+              severity: "ERROR",
+            });
 
             // Ocultar spinner
             hideSpinner();
@@ -1778,7 +1802,8 @@ export default function setupDashboard() {
         }
       }, 5000);
     } catch (error) {
-      console.error("Error in delete all tasks process:", error);
+      // ERROR: fallo inesperado en eliminacion masiva de tareas.
+      logger.appError("delete_task_bulk", { error: error.message, severity: "ERROR" });
 
       // Restaurar tareas en caso de error
       tasks.push(...tasksInColumn);
@@ -2156,7 +2181,6 @@ export default function setupDashboard() {
 
     // Verificar que tenemos un elemento siendo arrastrado
     if (!draggedElement) {
-      console.error("No hay elemento siendo arrastrado");
       return;
     }
 
@@ -2167,8 +2191,6 @@ export default function setupDashboard() {
     }
 
     if (!targetContainer) {
-      console.error("No se encontró un contenedor de tareas válido");
-      // Limpiar estado
       if (draggedElement) {
         draggedElement.style.opacity = "1";
         draggedElement.classList.remove("dragging");
@@ -2178,7 +2200,6 @@ export default function setupDashboard() {
 
     // Verificar que el elemento arrastrado aún existe y tiene los datos necesarios
     if (!draggedElement.dataset || !draggedElement.dataset.id) {
-      console.error("Elemento arrastrado no tiene datos válidos");
       targetContainer.classList.remove("drag-over");
       return;
     }
@@ -2192,7 +2213,6 @@ export default function setupDashboard() {
     const titleElement = columnElement?.querySelector("h2");
 
     if (!columnElement || !titleElement) {
-      console.error("No se pudo encontrar la columna o el título");
       targetContainer.classList.remove("drag-over");
       return;
     }
@@ -2206,7 +2226,6 @@ export default function setupDashboard() {
     } else if (columnTitle === "Completado") {
       newStatus = "Hecho";
     } else {
-      console.error("Título de columna no reconocido:", columnTitle);
       targetContainer.classList.remove("drag-over");
       return;
     }
@@ -2251,13 +2270,25 @@ export default function setupDashboard() {
         // Limpiar la referencia del elemento arrastrado
         draggedElement = null;
 
+        // INFO: tarea movida entre columnas via drag-and-drop (Kanban).
+        // Necesidad: auditar cambios de estado de tareas desde el cliente.
+        logger.taskEvent("kanban_move", {
+          taskId,
+          status: newStatus,
+        });
+
         // Mostrar mensaje de feedback
         toast.success(`Tarea movida a "${columnTitle}"`);
       } else {
         throw new Error("Error al actualizar el estado de la tarea");
       }
     } catch (error) {
-      console.error("Error updating task status:", error);
+      // ERROR: fallo al mover tarea via Kanban. Estado revertido en UI.
+      logger.appError("kanban_move", {
+        taskId,
+        error: error.message,
+        severity: "ERROR",
+      });
       toast.error("No se pudo actualizar el estado de la tarea");
 
       // Restablecer el estado visual del elemento arrastrado

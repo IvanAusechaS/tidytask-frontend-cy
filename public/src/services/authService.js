@@ -4,16 +4,16 @@
  */
 
 import { post } from "./api.js";
+import logger from "../utils/logger.js";
 
-// Definir la URL base de la API de forma consistente
-const getApiBaseUrl = () => {
-  const isProduction = window.location.hostname !== "localhost";
-  return isProduction
-    ? "https://tidytask-backend-154w.onrender.com"
-    : "http://localhost:3001/api";
-};
-
-const API_BASE_URL = "https://tidytask-backend-154w.onrender.com";
+// URL base de la API determinada por variable de entorno.
+// Misma logica que api.js para garantir consistencia entre servicios.
+// Necesidad: eliminar valores hardcodeados (OWASP A05).
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.MODE === "production"
+    ? "https://tidytask-backend-154w.onrender.com/api"
+    : "http://localhost:3001/api");
 
 /**
  * Log in a user with email and password
@@ -65,20 +65,19 @@ export async function logout() {
  * @returns {Promise<Object>} Recovery confirmation
  */
 export async function sendPasswordResetEmail(email) {
-  console.log("Sending password reset request for:", email);
   try {
-    // Recovery doesn't require auth token
     const result = await post("/auth/recover-password", { email }, false);
-    console.log("Password reset response:", result);
     return result;
   } catch (error) {
-    console.error("Error in sendPasswordResetEmail:", error);
-    // Devolver un objeto con formato similar a una respuesta exitosa pero con flag de error
+    // ERROR: fallo al enviar solicitud de recuperacion de contrasena.
+    // No se loguea el email para evitar exposicion de PII. GDPR / OWASP A09.
+    logger.appError("password_recovery", {
+      severity: "ERROR",
+      error: error.message,
+    });
     return {
       success: false,
-      message:
-        error.message ||
-        "Error al enviar el correo de recuperación. Intenta de nuevo más tarde.",
+      message: error.message || "Error al enviar el correo de recuperacion. Intenta de nuevo mas tarde.",
     };
   }
 }
@@ -91,30 +90,25 @@ export async function sendPasswordResetEmail(email) {
  * @returns {Promise<Object>} Reset confirmation
  */
 export async function resetPassword(token, newPassword) {
-  console.log("Resetting password with token:", token);
-
   try {
     const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: token,
-        password: newPassword,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: token, password: newPassword }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Reset password failed");
+      const errMsg = errorData.message || "Reset password failed";
+      // WARN: fallo en el reset de contrasena. Token invalido o expirado.
+      logger.appError("reset_password", { severity: "WARN", error: errMsg, statusCode: response.status });
+      throw new Error(errMsg);
     }
 
-    const data = await response.json();
-    console.log("Reset password response:", data);
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error("Error in resetPassword:", error);
+    // ERROR: fallo interno o de red al resetear contrasena.
+    logger.appError("reset_password", { severity: "ERROR", error: error.message });
     throw error;
   }
 }
