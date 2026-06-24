@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -157,7 +157,7 @@
                   user: userData.user,
                   redirect: true,
                 },
-                "*"
+                "*",
               );
 
               // Mostrar mensaje de éxito
@@ -191,7 +191,11 @@
           if (window.opener) {
             // Si es una ventana emergente, solo notificar a la ventana principal
             // y dejar que la ventana principal maneje la redirección
-            console.log("Notificando a la ventana principal para redirección");
+            logger.info("Redirecting main window", {
+              category: "ui_navigation",
+              event: "main_window_redirect_notified",
+              context: "ipc_communication", // O el mecanismo que uses (IPC, PostMessage, etc.)
+            });
             try {
               // No redirigir directamente, solo notificar
               window.opener.postMessage(
@@ -200,7 +204,7 @@
                   user: userData.user,
                   redirect: true,
                 },
-                "*"
+                "*",
               );
 
               // Mostrar mensaje de éxito
@@ -253,7 +257,7 @@
                 authenticated: true,
                 user: user,
               },
-              "*"
+              "*",
             );
           }
         }

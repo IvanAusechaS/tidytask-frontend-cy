@@ -23,7 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("user", JSON.stringify(data.user));
 
         // Redirigir al dashboard
-        console.log("Login exitoso con Google, redirigiendo al dashboard");
+        logger.info("Google OAuth authentication successful", {
+          category: "auth_security",
+          event: "google_login_success",
+        });
         setTimeout(() => {
           navigateTo("dashboard");
         }, 1000);

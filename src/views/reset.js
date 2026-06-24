@@ -5,18 +5,17 @@ import toast from "../utils/toast.js";
 import { addPasswordToggle } from "../utils/password-toggle.js";
 
 export default function setupReset() {
-  console.log("Configurando página de restablecimiento");
-
   // Obtener el token de la URL
   const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get("token");
 
-  console.log("Token de restablecimiento desde URL:", token);
-
   if (!token) {
-    console.log("No se encontró token, mostrando mensaje de error");
+    logger.info("Password reset aborted due to missing token in URL", {
+      category: "auth_security",
+      event: "password_reset_token_missing",
+    });
     showTokenError(
-      "Token de restablecimiento inválido o faltante. Por favor solicita un nuevo enlace de recuperación."
+      "Token de restablecimiento inválido o faltante. Por favor solicita un nuevo enlace de recuperación.",
     );
     return;
   }
@@ -38,7 +37,7 @@ export default function setupReset() {
   const confirmPasswordInput = document.getElementById("confirm-password");
   const newPasswordError = document.getElementById("new-password-error");
   const confirmPasswordError = document.getElementById(
-    "confirm-password-error"
+    "confirm-password-error",
   );
 
   if (!form) {
@@ -80,7 +79,7 @@ export default function setupReset() {
       showError(
         input,
         errorElement,
-        "La contraseña debe tener al menos 8 caracteres"
+        "La contraseña debe tener al menos 8 caracteres",
       );
       return false;
     }
@@ -90,7 +89,7 @@ export default function setupReset() {
       showError(
         input,
         errorElement,
-        "La contraseña debe contener al menos una letra mayúscula"
+        "La contraseña debe contener al menos una letra mayúscula",
       );
       return false;
     }
@@ -100,7 +99,7 @@ export default function setupReset() {
       showError(
         input,
         errorElement,
-        "La contraseña debe contener al menos una letra minúscula"
+        "La contraseña debe contener al menos una letra minúscula",
       );
       return false;
     }
@@ -110,7 +109,7 @@ export default function setupReset() {
       showError(
         input,
         errorElement,
-        "La contraseña debe contener al menos un número"
+        "La contraseña debe contener al menos un número",
       );
       return false;
     }
@@ -120,7 +119,7 @@ export default function setupReset() {
       showError(
         input,
         errorElement,
-        "La contraseña debe contener al menos un carácter especial"
+        "La contraseña debe contener al menos un carácter especial",
       );
       return false;
     }
@@ -152,11 +151,11 @@ export default function setupReset() {
   function validateAll() {
     const isPasswordValid = validatePassword(
       newPasswordInput,
-      newPasswordError
+      newPasswordError,
     );
     const isConfirmPasswordValid = validateConfirmPassword(
       confirmPasswordInput,
-      confirmPasswordError
+      confirmPasswordError,
     );
 
     return isPasswordValid && isConfirmPasswordValid;
@@ -184,7 +183,6 @@ export default function setupReset() {
   // Manejar envío del formulario
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    console.log("Formulario de restablecimiento enviado");
 
     // Validar todos los campos antes de enviar
     if (!validateAll()) {
@@ -200,16 +198,12 @@ export default function setupReset() {
     const newPassword = newPasswordInput.value;
 
     try {
-      console.log("Enviando solicitud de restablecimiento con token");
-
       // Simular tiempo mínimo de procesamiento
       const response = await resetPassword(token, newPassword);
       const elapsedTime = Date.now() - startTime;
       const remainingTime = Math.max(0, 1000 - elapsedTime);
 
       await new Promise((resolve) => setTimeout(resolve, remainingTime));
-
-      console.log("Respuesta de restablecimiento:", response);
 
       if (
         response &&
@@ -240,7 +234,7 @@ export default function setupReset() {
             response.message.includes("token"))
         ) {
           showTokenError(
-            "Tu enlace de restablecimiento ha expirado o es inválido. Por favor solicita uno nuevo."
+            "Tu enlace de restablecimiento ha expirado o es inválido. Por favor solicita uno nuevo.",
           );
           return;
         }
@@ -263,13 +257,13 @@ export default function setupReset() {
         errorMessage.includes("invalid")
       ) {
         showTokenError(
-          "Tu enlace de restablecimiento ha expirado o es inválido. Por favor solicita uno nuevo."
+          "Tu enlace de restablecimiento ha expirado o es inválido. Por favor solicita uno nuevo.",
         );
       } else if (errorMessage.includes("500")) {
         toast.error("Error del servidor. Por favor intenta más tarde.");
       } else {
         toast.error(
-          "Error de conexión. Por favor verifica tu conexión e intenta nuevamente."
+          "Error de conexión. Por favor verifica tu conexión e intenta nuevamente.",
         );
       }
     } finally {

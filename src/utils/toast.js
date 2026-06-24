@@ -33,7 +33,11 @@ class ToastManager {
     if (this.recentMessages.has(messageKey)) {
       const lastShown = this.recentMessages.get(messageKey);
       if (now - lastShown < 3000) {
-        console.log("Toast duplicado bloqueado:", message);
+        logger.info("Duplicate toast notification blocked", {
+          category: "ui_interaction",
+          event: "toast_duplicate_suppressed",
+          metadata: { message },
+        });
         return null; // No mostrar mensaje duplicado
       }
     }
@@ -131,7 +135,7 @@ class ToastManager {
     if (this.toasts.length > this.maxToasts) {
       const toastsToRemove = this.toasts.slice(
         0,
-        this.toasts.length - this.maxToasts
+        this.toasts.length - this.maxToasts,
       );
       toastsToRemove.forEach((toast) => this.remove(toast));
     }
@@ -173,10 +177,8 @@ let toastInstance = null;
 if (!window.toastManagerInstance) {
   toastInstance = new ToastManager();
   window.toastManagerInstance = toastInstance;
-  console.log("Nueva instancia de ToastManager creada");
 } else {
   toastInstance = window.toastManagerInstance;
-  console.log("Reutilizando instancia existente de ToastManager");
 }
 
 // Reemplazar el método alert nativo

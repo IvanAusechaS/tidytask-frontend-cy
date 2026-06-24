@@ -34,9 +34,12 @@ class FooterManager {
       }
 
       this.isInitialized = true;
-      console.log("Footer initialized successfully");
     } catch (error) {
-      console.error("Failed to initialize footer:", error);
+      logger.appError("Failed to initialize layout footer", {
+        category: "app_lifecycle",
+        event: "footer_initialization_failed",
+        metadata: { error: error.message },
+      });
     }
   }
 

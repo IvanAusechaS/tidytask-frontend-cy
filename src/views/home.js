@@ -2,26 +2,35 @@ import { navigate } from "../router.js";
 import toast from "../utils/toast.js";
 
 export default function setupHome() {
-  console.log("Configurando página de inicio (Landing Page)");
-
   // Limpiar cualquier intervalo que pueda estar ejecutándose desde otras páginas
   if (window.googleAuthCheckInterval) {
     clearInterval(window.googleAuthCheckInterval);
     delete window.googleAuthCheckInterval;
-    console.log("Intervalos de Google Auth limpiados en home");
   }
 
   if (window.dashboardIntervalId) {
     clearInterval(window.dashboardIntervalId);
     delete window.dashboardIntervalId;
-    console.log("Intervalos del dashboard limpiados en home");
   }
+  logger.info("Stale background intervals cleared successfully", {
+    category: "app_lifecycle",
+    event: "memory_cleanup_success",
+    metadata: { clearedIntervals: ["google_auth", "dashboard"] },
+  });
 
   // Botón de login en el header
   const loginButton = document.getElementById("login-button");
   if (loginButton) {
     loginButton.addEventListener("click", () => {
-      console.log("Navegando a login desde header");
+      // Ejemplo para el Hero
+      logger.info("User clicked call-to-action link", {
+        category: "ui_interaction",
+        event: "landing_conversion_clicked",
+        metadata: {
+          target_view: "signup", // o "login"
+          origin_component: "header", // "header", "cta", etc.
+        },
+      });
       navigate("login");
     });
   }
@@ -30,7 +39,14 @@ export default function setupHome() {
   const signupButton = document.getElementById("signup-button");
   if (signupButton) {
     signupButton.addEventListener("click", () => {
-      console.log("Navegando a signup desde header");
+      logger.info("User clicked call-to-action link", {
+        category: "ui_interaction",
+        event: "landing_conversion_clicked",
+        metadata: {
+          target_view: "signup", // o "login"
+          origin_component: "header", // "header", "cta", etc.
+        },
+      });
       navigate("signup");
     });
   }
@@ -39,7 +55,14 @@ export default function setupHome() {
   const getStartedButton = document.getElementById("get-started-button");
   if (getStartedButton) {
     getStartedButton.addEventListener("click", () => {
-      console.log("Navegando a signup desde hero");
+      logger.info("User clicked call-to-action link", {
+        category: "ui_interaction",
+        event: "landing_conversion_clicked",
+        metadata: {
+          target_view: "signup", // o "login"
+          origin_component: "hero", // "header", "cta", etc.
+        },
+      });
       navigate("signup");
     });
   }
@@ -62,7 +85,14 @@ export default function setupHome() {
   const ctaSignupButton = document.getElementById("cta-signup-button");
   if (ctaSignupButton) {
     ctaSignupButton.addEventListener("click", () => {
-      console.log("Navegando a signup desde CTA");
+      logger.info("User clicked call-to-action link", {
+        category: "ui_interaction",
+        event: "landing_conversion_clicked",
+        metadata: {
+          target_view: "signup", // o "login"
+          origin_component: "cta", // "header", "cta", etc.
+        },
+      });
       navigate("signup");
     });
   }
@@ -149,7 +179,7 @@ function setupFeatureCardsAnimation() {
     {
       threshold: 0.1,
       rootMargin: "0px 0px -50px 0px",
-    }
+    },
   );
 
   featureCards.forEach((card) => {
@@ -167,7 +197,11 @@ function setupHamburgerMenu() {
   const headerNav = document.getElementById("header-nav");
 
   if (!hamburgerBtn || !headerNav) {
-    console.log("Elementos del menú hamburguesa no encontrados");
+    logger.appError("Hamburger menu elements missing in DOM", {
+      category: "ui_interaction",
+      event: "responsive_menu_broken",
+      metadata: { component: "navbar" },
+    });
     return;
   }
 

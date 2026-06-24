@@ -1,5 +1,6 @@
 // Importar utilidades para mejorar la carga de páginas
 import { ensurePageLoaded } from "./utils/page-loader.js";
+import logger from "./utils/logger.js";
 
 // Variable para trackear la vista actual y evitar recargas innecesarias
 let currentView = null;
@@ -23,7 +24,15 @@ function getCurrentRoute() {
   const cleanPath = path.split("?")[0].slice(1);
   const cleanHash = hash.split("?")[0];
 
-  console.log("Path detectado:", path, "Hash detectado:", hash);
+  // Cambiado 'path' y 'hash' por 'cleanPath' y 'cleanHash' para que existan
+  logger.info("Routing initialized on DOM load", {
+    category: "app_lifecycle",
+    event: "routing_init",
+    metadata: {
+      path: window.location.pathname,
+      hash: window.location.hash,
+    },
+  });
 
   // Si estamos en la raíz y hay un token, ir al dashboard directamente
   if (
@@ -56,15 +65,27 @@ function getQueryParams() {
 export function handleRouting() {
   // Evitar ejecutar si estamos en medio de una navegación programática
   if (window.navigatingProgrammatically) {
-    console.log("Navegación programática en curso, saltando handleRouting");
+    logger.info("Bypassing routing handler during programmatic navigation", {
+      category: "ui_navigation",
+      event: "routing_handler_bypassed",
+      metadata: { reason: "programmatic_navigation" },
+    });
     return;
   }
 
   const route = getCurrentRoute();
   const queryParams = getQueryParams();
 
-  console.log("Current route:", route);
-  console.log("Query params:", Object.fromEntries(queryParams));
+  logger.info("Current route:", {
+    category: "ui_navigation",
+    event: "route_accessed",
+    metadata: { route },
+  });
+  logger.info("Query params:", {
+    category: "ui_navigation",
+    event: "query_params_accessed",
+    metadata: { params: Object.fromEntries(queryParams) },
+  });
 
   // Mapeo de rutas
   const routeMap = {
@@ -83,14 +104,18 @@ export function handleRouting() {
 
   const viewName = routeMap[route] || "login";
 
-  console.log(`Debug: route = '${route}', viewName = '${viewName}'`);
+  logger.info("Navigating to target view", {
+    category: "ui_navigation",
+    event: "navigation_triggered",
+    metadata: { route, viewName },
+  });
 
   // Verificación especial para reset - debe tener token
   if (viewName === "reset") {
     const token = queryParams.get("token");
     if (!token) {
       console.warn(
-        "Reset route accessed without token, redirecting to recovery"
+        "Reset route accessed without token, redirecting to recovery",
       );
       navigateTo("recovery");
       return;
@@ -123,7 +148,11 @@ export function navigate(route, forceReload = false) {
 
   const viewName = routeMap[route] || route; // Si no hay mapeo, usar la ruta original
 
-  console.log(`Navigate: route = '${route}', viewName = '${viewName}'`);
+  logger.info("Navigating to target view", {
+    category: "ui_navigation",
+    event: "navigation_triggered",
+    metadata: { route, viewName },
+  });
 
   // Actualizar la URL - mantener la ruta original para profile/edit
   const urlRoute = route === "profile-edit" ? "profile/edit" : route;
@@ -137,23 +166,23 @@ export async function navigateTo(viewName, forceReload = false) {
   try {
     // Evitar recargar la misma vista SOLO si no es una recarga forzada
     if (currentView === viewName && !forceReload) {
-      console.log(`Vista ${viewName} ya está cargada, evitando recarga`);
+      logger.info("Skipping view reload as target view is already active", {
+        category: "ui_navigation",
+        event: "view_reload_skipped",
+        metadata: { viewName, forceReload: false },
+      });
       return;
     }
 
     // Marcar que estamos navegando programáticamente
     window.navigatingProgrammatically = true;
-
-    console.log(`Intentando cargar vista: ${viewName}`);
-    console.log(`URL actual antes del cambio: ${window.location.pathname}`);
-
     // Verificar si tenemos token válido para rutas protegidas
     const protectedRoutes = ["dashboard", "profile", "profile-edit"];
     if (protectedRoutes.includes(viewName)) {
       const token = localStorage.getItem("token");
       if (!token) {
         console.warn(
-          `Intentando acceder a ${viewName} sin token, redirigiendo a login`
+          `Intentando acceder a ${viewName} sin token, redirigiendo a login`,
         );
         // Cambiar viewName en lugar de hacer llamada recursiva
         viewName = "login";
@@ -171,21 +200,19 @@ export async function navigateTo(viewName, forceReload = false) {
     }
 
     if (window.location.pathname !== newUrl) {
-      console.log(
-        `Actualizando URL de ${window.location.pathname} a ${newUrl}`
-      );
-      history.pushState({}, "", newUrl);
-      console.log(`URL actualizada: ${window.location.pathname}`);
+      logger.info("Updating browser URL", {
+        category: "ui_navigation",
+        event: "url_update_triggered",
+        metadata: { oldUrl: window.location.pathname, newUrl },
+      });
+      history.pushState;
+      // Borrado: URL actualizada...;
     } else {
-      console.log(`URL ya está correcta: ${newUrl}`);
+      // Borrado: URL ya está correcta...
     }
 
     // Convertir a formato de archivo (primera letra minúscula)
     const fileViewName = viewName.charAt(0).toLowerCase() + viewName.slice(1);
-
-    console.log(
-      `Debug: viewName = ${viewName}, fileViewName = ${fileViewName}`
-    );
 
     // Caso especial para auth-callback
     if (viewName === "auth-callback") {
@@ -223,7 +250,7 @@ export async function navigateTo(viewName, forceReload = false) {
     // Limpiar el HTML de los enlaces CSS
     const cleanHtml = html.replace(
       /<link\s+rel=["']stylesheet["']\s+href=["'][^"']+["']\s*\/?>/g,
-      ""
+      "",
     );
 
     // Obtener el contenedor de la aplicación
@@ -235,7 +262,11 @@ export async function navigateTo(viewName, forceReload = false) {
 
     // Aplicar el HTML limpio
     appContainer.innerHTML = cleanHtml;
-    console.log(`Vista ${viewName} cargada correctamente`);
+    logger.info("View loaded successfully", {
+      category: "ui_navigation",
+      event: "view_load_success",
+      metadata: { viewName },
+    });
 
     // Forzar scroll al top inmediatamente después de cargar el contenido
     window.scrollTo(0, 0);
@@ -252,14 +283,12 @@ export async function navigateTo(viewName, forceReload = false) {
           link.rel = "stylesheet";
           link.href = href;
           document.head.appendChild(link);
-          console.log(`CSS agregado: ${href}`);
         }
       });
     }
 
     // Importa el script asociado a la vista
     try {
-      console.log(`Intentando cargar script: ./views/${fileViewName}.js`);
       // Solo limpiar caché si es necesario (por ejemplo, en desarrollo)
       const isDevelopment =
         window.location.hostname === "localhost" ||
@@ -271,7 +300,6 @@ export async function navigateTo(viewName, forceReload = false) {
       const module = await import(moduleUrl);
 
       if (module.default) {
-        console.log(`Ejecutando setup de ${viewName}`);
         module.default(); // Ejecuta setup si existe
 
         // Actualizar vista actual después de carga exitosa
@@ -294,9 +322,8 @@ export async function navigateTo(viewName, forceReload = false) {
     }
   } catch (error) {
     console.error(`No se pudo cargar la vista: ${viewName}`, error);
-    document.querySelector(
-      "#app"
-    ).innerHTML = `<h2>Error al cargar ${viewName}</h2><p>${error.message}</p>`;
+    document.querySelector("#app").innerHTML =
+      `<h2>Error al cargar ${viewName}</h2><p>${error.message}</p>`;
   } finally {
     // Desmarcar la bandera de navegación programática
     setTimeout(() => {

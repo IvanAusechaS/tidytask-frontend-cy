@@ -24,13 +24,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const bodyText = document.body.textContent.trim();
 
   if (bodyText.includes('"token"') && bodyText.includes('"user"')) {
-    console.log("Encontrado texto que parece JSON de autenticación");
 
     const data = extractJsonFromText(bodyText);
 
     if (data && data.token && data.user) {
-      console.log("Datos de autenticación extraídos correctamente");
-
+      
       // Guardar los datos
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));

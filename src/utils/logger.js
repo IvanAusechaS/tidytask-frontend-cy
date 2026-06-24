@@ -164,11 +164,24 @@ function debug(message, fields = {}) {
   emit('DEBUG', entry, message);
 }
 
+function info(message, fields = {}) {
+  const entry = {
+    ...createBaseEntry('INFO'),
+    event: fields.event || 'general_info',
+    category: fields.category || 'app_lifecycle',
+    userId: getCurrentUserId(),
+    ...fields,
+  };
+  emit('INFO', entry, message);
+}
+
+
 const logger = {
   taskEvent,
   appError,
   authEvent,
   debug,
+  info
 };
 
 export default logger;

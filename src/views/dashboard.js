@@ -38,20 +38,19 @@ export default function setupDashboard() {
 
   // Reinicializamos siempre para asegurar que todo funcione correctamente tras recarga
   window.dashboardInitialized = true;
-  console.log("Inicializando dashboard...");
 
   // Verificar si el usuario está autenticado
   const token = localStorage.getItem("token");
   const user = getCurrentUser();
 
   if (!token || !user) {
-    console.log("No hay token o usuario. Redirigiendo a login...");
-    // Redireccionar a login si no hay usuario o token
+    logger.info("Authentication missing, redirecting to login", {
+      category: "auth_security",
+      event: "unauthenticated_route_intercepted",
+    }); // Redireccionar a login si no hay usuario o token
     navigateTo("login");
     return;
   }
-
-  console.log("Usuario autenticado encontrado:", user.firstName);
 
   // Estado global para tareas y tarea actual
   let tasks = [];
@@ -243,7 +242,7 @@ export default function setupDashboard() {
     errorLiveRegion.setAttribute("aria-live", "polite");
     elements.taskForm.insertBefore(
       errorLiveRegion,
-      elements.taskForm.firstChild
+      elements.taskForm.firstChild,
     );
   }
 
@@ -255,27 +254,25 @@ export default function setupDashboard() {
    */
   async function initializeDashboard() {
     try {
-      console.log("Iniciando inicialización del dashboard");
-
       if (!localStorage.getItem("token")) {
         throw new Error("No hay token disponible");
       }
 
       // Cargar tareas
       await loadTasks();
-      console.log("Tareas cargadas exitosamente");
 
       // IMPORTANTE: Siempre renderizar después de cargar
       renderTasks();
-      console.log("Dashboard inicializado completamente");
-
+      logger.info("Dashboard fully initialized", {
+        category: "ui_navigation",
+        event: "dashboard_init_success",
+      });
       // Volver a configurar event listeners después de renderizar
       setupEventListeners();
 
       // Configurar actualización automática cada 30 segundos
       const intervalId = setInterval(async () => {
         try {
-          console.log("Actualizando tareas automáticamente...");
           const originalTasks = [...tasks];
           const originalTasksJson = JSON.stringify(originalTasks);
 
@@ -286,9 +283,10 @@ export default function setupDashboard() {
           const hasActualChanges = originalTasksJson !== newTasksJson;
 
           if (hasActualChanges) {
-            console.log(
-              "Se detectaron cambios reales en las tareas, actualizando vista..."
-            );
+            logger.info("Data delta detected, forcing view rerender", {
+              category: "task_management",
+              event: "view_sync_forced",
+            });
             renderTasks();
 
             // Solo mostrar notificación si hay cambios reales en los datos
@@ -302,7 +300,7 @@ export default function setupDashboard() {
                   task.status !== tasks[index].status ||
                   task.title !== tasks[index].title ||
                   task.date !== tasks[index].date ||
-                  task.time !== tasks[index].time
+                  task.time !== tasks[index].time,
               )
             ) {
               toast.info("Tareas actualizadas");
@@ -331,8 +329,12 @@ export default function setupDashboard() {
         error.message.includes("token") ||
         error.message.includes("Authentication")
       ) {
-        console.log(
-          "Error de autenticación en inicialización, redirigiendo a login"
+        logger.appError(
+          "Session authentication failed during dashboard initialization",
+          {
+            category: "auth_security",
+            event: "dashboard_auth_failed",
+          },
         );
         alert("Por favor, inicia sesión para acceder al dashboard.");
         localStorage.removeItem("token");
@@ -340,7 +342,7 @@ export default function setupDashboard() {
         setTimeout(() => navigateTo("login"), 300);
       } else {
         alert(
-          "Hubo un problema al cargar tus tareas. Algunas funcionalidades podrían no estar disponibles."
+          "Hubo un problema al cargar tus tareas. Algunas funcionalidades podrían no estar disponibles.",
         );
 
         // IMPORTANTE: Renderizar interfaz vacía incluso en caso de error
@@ -359,10 +361,17 @@ export default function setupDashboard() {
     try {
       if (!localStorage.getItem("token")) {
         // WARN: intento de carga de tareas sin token de autenticacion.
-        logger.appError("load_tasks", {
-          severity: "WARN",
-          error: "No authentication token available",
-        });
+        logger.appError(
+          "Attempted to load tasks without authentication token",
+          {
+            category: "auth_security", // Cambia a auth por el dominio del problema
+            event: "tasks_load_unauthorized_attempt",
+            metadata: {
+              severity: "WARN", // Lo dejamos aquí por consistencia si no tienes logger.appWarning
+              error: "No authentication token available",
+            },
+          },
+        );
         toast.error("Sesión expirada. Por favor inicie sesión nuevamente.");
         setTimeout(() => {
           navigateTo("login");
@@ -395,7 +404,11 @@ export default function setupDashboard() {
       setupTaskDragListeners();
     } catch (error) {
       // ERROR: fallo al cargar tareas del backend.
-      logger.appError("load_tasks", { error: error.message, severity: "ERROR" });
+      logger.appError("Failed to load tasks from server", {
+        category: "task_management",
+        event: "tasks_load_failed",
+        metadata: { error: error.message },
+      });
 
       if (showLoadingIndicator) {
         hideSpinner();
@@ -604,10 +617,6 @@ export default function setupDashboard() {
           clearTimeout(window.resizeTimer);
         }
         window.resizeTimer = setTimeout(function () {
-          console.log(
-            "Adaptando layout para nuevo tamaño: " + window.innerWidth + "px"
-          );
-
           // Re-inicializar completamente el layout adaptativo
           resetAdaptiveLayout();
           adjustLayoutForScreenSize();
@@ -649,7 +658,7 @@ export default function setupDashboard() {
 
       // Mantener solo la columna activa actual o por defecto "todo"
       const activeButton = document.querySelector(
-        ".adaptive-tab-button.active"
+        ".adaptive-tab-button.active",
       );
       const activeColumn = activeButton
         ? activeButton.getAttribute("data-column")
@@ -724,7 +733,7 @@ export default function setupDashboard() {
       // Asegurarse de que el primer botón esté activo
       tabButtons.forEach((btn) => btn.classList.remove("active"));
       const todoButton = document.querySelector(
-        '.adaptive-tab-button[data-column="todo"]'
+        '.adaptive-tab-button[data-column="todo"]',
       );
       if (todoButton) {
         todoButton.classList.add("active");
@@ -932,7 +941,6 @@ export default function setupDashboard() {
    */
   function createTaskElement(task) {
     // Debug: Verificar datos de la tarea
-    console.log("Creating task element for:", task);
 
     const taskDiv = document.createElement("div");
     taskDiv.className = "task-card";
@@ -992,8 +1000,6 @@ export default function setupDashboard() {
             .replace(/"/g, "&quot;")
         : "Sin título";
 
-    console.log("Safe title:", safeTitle);
-
     taskDiv.innerHTML = `
       <div class="task-title"></div>
       <div class="task-description">${(task.detail || "")
@@ -1035,7 +1041,6 @@ export default function setupDashboard() {
     const titleElement = taskDiv.querySelector(".task-title");
     if (titleElement) {
       titleElement.textContent = safeTitle;
-      console.log("Title element created with text:", titleElement.textContent);
 
       // Añadir estilos inline para asegurar visibilidad y alineación
       titleElement.style.display = "block";
@@ -1388,7 +1393,10 @@ export default function setupDashboard() {
 
     // Prevenir múltiples envíos
     if (isSubmittingTask) {
-      console.log("Ya se está procesando una tarea, ignorando envío adicional");
+      logger.info("Subsequent form submission blocked to prevent duplication", {
+        category: "ui_interaction",
+        event: "double_submit_prevented",
+      });
       return;
     }
 
@@ -1513,16 +1521,25 @@ export default function setupDashboard() {
 
       // INFO: tarea creada exitosamente desde el cliente.
       // Necesidad: correlacionar evento de UI con el log de backend via userId.
-      logger.taskEvent("create_success", {
-        taskId: response?.task?._id || response?._id,
-        status: taskData.status,
-        deadline: taskData.date,
+      logger.taskEvent("Task created successfully from client", {
+        category: "task_management",
+        event: "task_creation_success",
+        metadata: {
+          taskId: response?.task?._id || response?._id,
+          userId: currentUserId, // <-- Añadido para la correlación solicitada
+          status: taskData.status,
+          deadline: taskData.date,
+        },
       });
 
       return response;
     } catch (error) {
       // ERROR: fallo al crear tarea en el cliente. Captura errores de red y de API.
-      logger.appError("create_task", { error: error.message });
+      logger.appError("Failed to create task from client", {
+        category: "task_management",
+        event: "task_creation_failed",
+        metadata: { error: error.message },
+      });
       throw error;
     }
   }
@@ -1536,14 +1553,22 @@ export default function setupDashboard() {
     try {
       await put(`/tasks/${taskId}`, taskData);
       // INFO: tarea actualizada exitosamente desde el cliente.
-      logger.taskEvent("update_success", {
-        taskId,
-        status: taskData.status,
-        deadline: taskData.date,
+      logger.taskEvent("Task updated successfully from client", {
+        category: "task_management",
+        event: "task_update_success",
+        metadata: {
+          taskId,
+          status: taskData.status,
+          deadline: taskData.date,
+        },
       });
     } catch (error) {
       // ERROR: fallo al actualizar tarea en el cliente.
-      logger.appError("update_task", { taskId, error: error.message });
+      logger.appError("Failed to update task from client", {
+        category: "task_management",
+        event: "task_update_failed",
+        metadata: { taskId, error: error.message },
+      });
       throw error;
     }
   }
@@ -1563,7 +1588,7 @@ export default function setupDashboard() {
     // Mostrar confirmación mejorada
     const confirmed = await showDeleteConfirmation(
       "¿Estás seguro que deseas eliminar?",
-      "Esta tarea será eliminada permanentemente y no se puede recuperar."
+      "Esta tarea será eliminada permanentemente y no se puede recuperar.",
     );
 
     if (!confirmed) {
@@ -1571,11 +1596,11 @@ export default function setupDashboard() {
     }
 
     // INFO: usuario confirmo la eliminacion de la tarea.
-    logger.taskEvent("delete_confirmed", {
-      taskId,
-      status: taskToDelete.status,
+    logger.taskEvent("Task permanently deleted from server", {
+      category: "task_management",
+      event: "task_deletion_api_success",
+      metadata: { taskId, status: taskToDelete.status },
     });
-
     let isUndone = false;
     let timeoutId = null;
 
@@ -1613,7 +1638,7 @@ export default function setupDashboard() {
 
           toast.info("Eliminación cancelada");
         },
-        5000 // 5 segundos para deshacer
+        5000, // 5 segundos para deshacer
       );
 
       // Programar eliminación definitiva después de 5 segundos
@@ -1630,18 +1655,19 @@ export default function setupDashboard() {
             hideSpinner();
 
             // INFO: tarea eliminada definitivamente en el servidor.
-            logger.taskEvent("delete_success", {
-              taskId,
-              status: taskToDelete.status,
+            logger.taskEvent("Task deletion confirmed by user", {
+              category: "task_management",
+              event: "task_deletion_confirmed",
+              metadata: { taskId, status: taskToDelete.status },
             });
 
             toast.success("Tarea eliminada definitivamente");
           } catch (error) {
             // ERROR: fallo al eliminar la tarea en el servidor.
-            logger.appError("delete_task", {
-              taskId,
-              error: error.message,
-              severity: "ERROR",
+            logger.appError("Failed to delete task on server", {
+              category: "task_management",
+              event: "task_server_deletion_failed",
+              metadata: { taskId, error: error.message },
             });
 
             // Ocultar spinner
@@ -1659,14 +1685,18 @@ export default function setupDashboard() {
             }
 
             toast.error(
-              "Error al eliminar la tarea del servidor. Tarea restaurada."
+              "Error al eliminar la tarea del servidor. Tarea restaurada.",
             );
           }
         }
       }, 5000);
     } catch (error) {
       // ERROR: fallo inesperado en el proceso de eliminacion de tarea.
-      logger.appError("delete_task", { taskId, error: error.message, severity: "ERROR" });
+      logger.appError("Unexpected error during task deletion process", {
+        category: "task_management",
+        event: "task_deletion_unexpected_error",
+        metadata: { taskId, error: error.message },
+      });
 
       // Restaurar tarea en caso de error
       tasks.push(taskToDelete);
@@ -1696,7 +1726,7 @@ export default function setupDashboard() {
 
     if (tasksInColumn.length === 0) {
       toast.info(
-        `No hay tareas en la columna "${getColumnDisplayName(column)}"`
+        `No hay tareas en la columna "${getColumnDisplayName(column)}"`,
       );
       return;
     }
@@ -1706,7 +1736,7 @@ export default function setupDashboard() {
     // Mostrar confirmación mejorada
     const confirmed = await showDeleteConfirmation(
       "¿Estás seguro que deseas eliminar?",
-      `Se eliminarán todas las ${tasksInColumn.length} tareas de la columna "${columnName}". Tendrás 5 segundos para deshacer la acción.`
+      `Se eliminarán todas las ${tasksInColumn.length} tareas de la columna "${columnName}". Tendrás 5 segundos para deshacer la acción.`,
     );
 
     if (!confirmed) {
@@ -1750,7 +1780,7 @@ export default function setupDashboard() {
 
           toast.info("Eliminación masiva cancelada");
         },
-        5000 // 5 segundos para deshacer
+        5000, // 5 segundos para deshacer
       );
 
       // Programar eliminación definitiva después de 5 segundos
@@ -1762,7 +1792,7 @@ export default function setupDashboard() {
 
             // Crear array de promesas para eliminar todas las tareas del servidor
             const deletePromises = tasksInColumn.map((task) =>
-              del(`/tasks/${task._id}`)
+              del(`/tasks/${task._id}`),
             );
 
             // Ejecutar todas las eliminaciones en paralelo
@@ -1772,13 +1802,14 @@ export default function setupDashboard() {
             hideSpinner();
 
             toast.success(
-              `${tasksInColumn.length} tareas eliminadas definitivamente de "${columnName}"`
+              `${tasksInColumn.length} tareas eliminadas definitivamente de "${columnName}"`,
             );
           } catch (error) {
             // ERROR: fallo al eliminar masivamente tareas en el servidor.
-            logger.appError("delete_task_bulk", {
-              error: error.message,
-              severity: "ERROR",
+            logger.appError("Failed to delete task", {
+              category: "task_management",
+              event: "task_deletion_failed",
+              metadata: { taskId, error: error.message },
             });
 
             // Ocultar spinner
@@ -1796,14 +1827,18 @@ export default function setupDashboard() {
             }
 
             toast.error(
-              `Error al eliminar las tareas del servidor. Tareas de "${columnName}" restauradas.`
+              `Error al eliminar las tareas del servidor. Tareas de "${columnName}" restauradas.`,
             );
           }
         }
       }, 5000);
     } catch (error) {
       // ERROR: fallo inesperado en eliminacion masiva de tareas.
-      logger.appError("delete_task_bulk", { error: error.message, severity: "ERROR" });
+      logger.appError("Failed to bulk delete tasks", {
+        category: "task_management",
+        event: "task_bulk_deletion_failed",
+        metadata: { error: error.message },
+      });
 
       // Restaurar tareas en caso de error
       tasks.push(...tasksInColumn);
@@ -1922,7 +1957,7 @@ export default function setupDashboard() {
           tasks,
           handleTaskUpdateFromCalendar,
           handleTaskCreateFromCalendar,
-          handleTaskDeleteFromCalendar
+          handleTaskDeleteFromCalendar,
         );
       } else {
         // Actualizar tareas en el calendario existente
@@ -2047,8 +2082,6 @@ export default function setupDashboard() {
    * Usando event delegation para mayor robustez y evitar problemas después de re-renders
    */
   function setupTaskActionDelegation() {
-    console.log("Setting up task action delegation...");
-
     // Remover listener anterior si existe para evitar duplicados
     if (elements.kanbanBoard) {
       elements.kanbanBoard.removeEventListener("click", handleTaskActionClick);
@@ -2056,7 +2089,6 @@ export default function setupDashboard() {
       elements.kanbanBoard.addEventListener("click", handleTaskActionClick);
     }
 
-    console.log("Task action delegation configured");
   }
 
   /**
@@ -2076,7 +2108,11 @@ export default function setupDashboard() {
       const task = tasks.find((t) => t._id === taskId);
 
       if (task) {
-        console.log("Edit button clicked for task:", task._id);
+        logger.info("Task edit mode opened", {
+          category: "task_management",
+          event: "task_edit_triggered",
+          metadata: { taskId: task._id },
+        });
         openEditTaskModal(task);
       } else {
         console.error("Task not found for edit:", taskId);
@@ -2089,7 +2125,11 @@ export default function setupDashboard() {
       const taskId = deleteBtn.getAttribute("data-id");
 
       if (taskId) {
-        console.log("Delete button clicked for task:", taskId);
+        logger.info("Task edit mode opened", {
+          category: "task_management",
+          event: "task_edit_triggered",
+          metadata: { taskId: task._id },
+        });
         deleteTask(taskId);
       } else {
         console.error("No task ID found for delete button");
@@ -2272,9 +2312,10 @@ export default function setupDashboard() {
 
         // INFO: tarea movida entre columnas via drag-and-drop (Kanban).
         // Necesidad: auditar cambios de estado de tareas desde el cliente.
-        logger.taskEvent("kanban_move", {
-          taskId,
-          status: newStatus,
+        logger.taskEvent("Kanban task moved successfully", {
+          category: "task_management",
+          event: "kanban_task_moved",
+          metadata: { taskId, status: newStatus },
         });
 
         // Mostrar mensaje de feedback
@@ -2284,10 +2325,10 @@ export default function setupDashboard() {
       }
     } catch (error) {
       // ERROR: fallo al mover tarea via Kanban. Estado revertido en UI.
-      logger.appError("kanban_move", {
-        taskId,
-        error: error.message,
-        severity: "ERROR",
+      logger.appError("Failed to move Kanban task", {
+        category: "task_management",
+        event: "kanban_task_move_failed",
+        metadata: { taskId, error: error.message },
       });
       toast.error("No se pudo actualizar el estado de la tarea");
 

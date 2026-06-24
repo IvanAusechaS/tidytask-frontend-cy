@@ -70,14 +70,17 @@ export async function sendPasswordResetEmail(email) {
     return result;
   } catch (error) {
     // ERROR: fallo al enviar solicitud de recuperacion de contrasena.
-    // No se loguea el email para evitar exposicion de PII. GDPR / OWASP A09.
-    logger.appError("password_recovery", {
-      severity: "ERROR",
-      error: error.message,
+    // Nota: Se omite el email en la metadata para cumplir con GDPR / OWASP A09.
+    logger.appError("Failed to dispatch password recovery request", {
+      category: "auth_security",
+      event: "password_recovery_dispatch_failed",
+      metadata: { error: error.message },
     });
     return {
       success: false,
-      message: error.message || "Error al enviar el correo de recuperacion. Intenta de nuevo mas tarde.",
+      message:
+        error.message ||
+        "Error al enviar el correo de recuperacion. Intenta de nuevo mas tarde.",
     };
   }
 }
@@ -101,14 +104,29 @@ export async function resetPassword(token, newPassword) {
       const errorData = await response.json();
       const errMsg = errorData.message || "Reset password failed";
       // WARN: fallo en el reset de contrasena. Token invalido o expirado.
-      logger.appError("reset_password", { severity: "WARN", error: errMsg, statusCode: response.status });
+      logger.appError(
+        "Password reset rejected due to invalid or expired token",
+        {
+          category: "auth_security",
+          event: "password_reset_token_invalid",
+          metadata: {
+            severity: "WARN",
+            error: errMsg,
+            statusCode: response.status,
+          },
+        },
+      );
       throw new Error(errMsg);
     }
 
     return await response.json();
   } catch (error) {
     // ERROR: fallo interno o de red al resetear contrasena.
-    logger.appError("reset_password", { severity: "ERROR", error: error.message });
+    logger.appError("Internal network failure during password reset", {
+      category: "auth_security",
+      event: "password_reset_network_failed",
+      metadata: { error: error.message },
+    });
     throw error;
   }
 }

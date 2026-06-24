@@ -14,8 +14,10 @@ export function ensurePageLoaded(route) {
     appContainer.innerHTML.includes("Error al cargar") ||
     (appContainer.innerHTML.trim() === "" && document.readyState === "complete")
   ) {
-    console.log("Detectada página no cargada correctamente, reintentando...");
-
+    logger.info("Page load failure detected, initiating retry", {
+      category: "app_lifecycle",
+      event: "page_load_retry_triggered",
+    });
     // Pequeño retraso para permitir que el DOM se estabilice
     setTimeout(() => {
       navigateTo(route);
@@ -29,8 +31,6 @@ export function ensurePageLoaded(route) {
 
 // Función para asegurar que las cargas de scripts funcionen correctamente
 export function setupPageEvents(setupFn, pageName) {
-  console.log(`Configurando eventos para ${pageName}...`);
-
   // Verificar si el DOM está listo
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
@@ -52,13 +52,19 @@ export function checkAuth(requiredAuth = true) {
   const hasToken = !!localStorage.getItem("token");
 
   if (requiredAuth && !hasToken) {
-    console.log("Se requiere autenticación, redirigiendo a login...");
+    logger.info("Authentication required, redirecting to login", {
+      category: "auth_security",
+      event: "unauthenticated_route_intercepted",
+    });
     navigateTo("login");
     return false;
   }
 
   if (!requiredAuth && hasToken) {
-    console.log("Usuario ya autenticado, redirigiendo a dashboard...");
+    logger.info("Authenticated user redirected to dashboard", {
+      category: "auth_security",
+      event: "authenticated_user_redirected",
+    });
     navigateTo("dashboard");
     return false;
   }

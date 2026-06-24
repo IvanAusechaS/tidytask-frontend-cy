@@ -28,16 +28,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Si parece una respuesta JSON de autenticación con token y datos de usuario
     if (bodyText.includes('"token"') && bodyText.includes('"user"')) {
-      console.log("Encontrado texto que parece JSON de autenticación");
-
       try {
         // Intenta extraer y parsear el JSON
         const data = extractJsonFromText(bodyText);
 
         // Si es una respuesta de autenticación válida
         if (data && data.token && data.user) {
-          console.log("Datos de autenticación extraídos correctamente");
-
           // Guardar token y datos de usuario
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
@@ -52,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   type: "GOOGLE_AUTH_SUCCESS",
                   user: data.user,
                 },
-                "*"
+                "*",
               );
             } catch (e) {
               console.error("Error comunicando con ventana principal:", e);
@@ -125,9 +121,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // Escuchar mensajes de la ventana emergente (si somos la ventana principal)
   window.addEventListener("message", function (event) {
     if (event.data && event.data.type === "GOOGLE_AUTH_SUCCESS") {
-      console.log(
-        "Recibida confirmación de autenticación exitosa de la ventana emergente"
-      );
+      logger.info("Authentication confirmation received from popup", {
+        category: "auth_security",
+        event: "popup_auth_success",
+      });
 
       // Mostrar mensaje de bienvenida
       const user = event.data.user;
@@ -149,15 +146,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const isGoogleCallback =
     path.includes("auth-callback") || path.includes("google-callback");
   const isMainPage = ["/login", "/signup", "/dashboard", "/recovery"].some(
-    (page) => path.endsWith(page)
+    (page) => path.endsWith(page),
   );
 
   // Verificar respuesta JSON según el contexto
   if (isGoogleCallback) {
-    console.log("Página de callback detectada, procesando respuesta...");
     setTimeout(checkForJsonResponse, 100);
   } else if (!isMainPage) {
-    console.log("Verificando posible respuesta JSON en página no principal...");
     setTimeout(checkForJsonResponse, 100);
   }
 });

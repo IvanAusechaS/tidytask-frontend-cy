@@ -10,14 +10,28 @@ export default function setupSignup() {
   if (window.googleAuthCheckInterval) {
     clearInterval(window.googleAuthCheckInterval);
     delete window.googleAuthCheckInterval;
-    console.log("Intervalos de Google Auth limpiados en signup");
+    logger.info("Stale background intervals cleared successfully", {
+      category: "app_lifecycle",
+      event: "memory_cleanup_success",
+      metadata: {
+        view: "signup",
+        clearedIntervals: ["google_auth"],
+      },
+    });
   }
 
   // Limpiar cualquier intervalo del dashboard que pueda estar ejecutándose
   if (window.dashboardIntervalId) {
     clearInterval(window.dashboardIntervalId);
     delete window.dashboardIntervalId;
-    console.log("Intervalos del dashboard limpiados en signup");
+    logger.info("Stale background intervals cleared successfully", {
+      category: "app_lifecycle",
+      event: "memory_cleanup_success",
+      metadata: {
+        view: "signup",
+        clearedIntervals: ["dashboard"],
+      },
+    });
   }
 
   // Limpiar función de limpieza si existe
@@ -389,8 +403,6 @@ export default function setupSignup() {
         password,
       };
 
-      console.log("Sending registration data:", userData);
-
       // Simular un tiempo mínimo de procesamiento (mínimo 1s, máximo 3s)
       const startTime = Date.now();
       const res = await signup(userData);
@@ -398,8 +410,6 @@ export default function setupSignup() {
       const remainingTime = Math.max(0, 1000 - elapsedTime);
 
       await new Promise((resolve) => setTimeout(resolve, remainingTime));
-
-      console.log("Server response:", res);
 
       // Guardar token y usuario
       localStorage.setItem("token", res.token);
@@ -449,7 +459,11 @@ export default function setupSignup() {
   if (goLoginBtn) {
     goLoginBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log("Botón go-login clickeado, navegando a login...");
+      logger.info("navigation", {
+        action: "go_login_click",
+        location: "button",
+        route: "login",
+      });
       // Limpiar intervalos antes de navegar
       if (window.cleanupLoginIntervals) {
         window.cleanupLoginIntervals();
@@ -457,7 +471,15 @@ export default function setupSignup() {
       navigateTo("login", true);
     });
   } else {
-    console.error("Elemento go-login no encontrado en signup.js");
+    logger.error("Go-login button not found during signup", {
+      category: "ui_interaction",
+      event: "navigation_element_missing",
+      metadata: {
+        target_element: "go-login",
+        view: "signup",
+        intended_route: "login",
+      },
+    });
   }
 
   // Navegar al home
@@ -465,7 +487,11 @@ export default function setupSignup() {
   if (goHomeButton) {
     goHomeButton.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log("Botón go-home clickeado, navegando a home...");
+      logger.info("navigation", {
+        action: "go_home_click",
+        location: "button",
+        route: "home",
+      });
       // Limpiar intervalos antes de navegar
       if (window.cleanupLoginIntervals) {
         window.cleanupLoginIntervals();
@@ -474,7 +500,11 @@ export default function setupSignup() {
       navigateTo("home", true);
     });
   } else {
-    console.error("Botón go-home no encontrado en signup");
+    logger.info("navigation", {
+      action: "go_home_click",
+      location: "button",
+      route: "home",
+    });
   }
 
   // Botón de signup con Google - COMENTADO: OAuth de Google deshabilitado

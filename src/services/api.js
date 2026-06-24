@@ -65,11 +65,16 @@ export async function post(endpoint, data, requiresAuth = true) {
     const err = new Error(errMsg);
     err.status = response.status;
 
-    logger.appError("api_post", {
-      severity: response.status >= 500 ? "ERROR" : "WARN",
-      error: errMsg,
-      endpoint,
-      statusCode: response.status,
+    // WARN/ERROR: respuesta de error del backend en POST.
+    logger.appError("API post request failed", {
+      category: "api_client",
+      event: "api_post_http_error",
+      metadata: {
+        severity: response.status >= 500 ? "ERROR" : "WARN",
+        error: errMsg,
+        endpoint,
+        statusCode: response.status,
+      },
     });
 
     throw err;
@@ -105,23 +110,32 @@ export async function get(endpoint, requiresAuth = true) {
       const error = await response.json();
       const errMsg =
         error.message || `Request failed with status ${response.status}`;
-      // WARN/ERROR: respuesta de error del backend en GET. Necesidad: trazabilidad de
       // fallos de API en el cliente. OWASP A09:2021.
-      logger.appError("api_get", {
-        severity: response.status >= 500 ? "ERROR" : "WARN",
-        error: errMsg,
-        endpoint,
-        statusCode: response.status,
+      // WARN/ERROR: respuesta de error del backend en GET.
+      logger.appError("API get request failed", {
+        category: "api_client",
+        event: "api_get_http_error",
+        metadata: {
+          severity: response.status >= 500 ? "ERROR" : "WARN",
+          error: errMsg,
+          endpoint,
+          statusCode: response.status,
+        },
       });
       throw new Error(errMsg);
     } catch (e) {
       if (!(e instanceof SyntaxError)) throw e;
       const errMsg = `Request failed with status ${response.status}`;
-      logger.appError("api_get", {
-        severity: response.status >= 500 ? "ERROR" : "WARN",
-        error: errMsg,
-        endpoint,
-        statusCode: response.status,
+      // WARN/ERROR: respuesta de error del backend en GET.
+      logger.appError("API get request failed", {
+        category: "api_client",
+        event: "api_get_http_error",
+        metadata: {
+          severity: response.status >= 500 ? "ERROR" : "WARN",
+          error: errMsg,
+          endpoint,
+          statusCode: response.status,
+        },
       });
       throw new Error(errMsg);
     }
@@ -209,21 +223,30 @@ export async function put(endpoint, data, requiresAuth = true) {
       const errMsg =
         error.message || `Request failed with status ${response.status}`;
       // WARN/ERROR: respuesta de error del backend en PUT.
-      logger.appError("api_put", {
-        severity: response.status >= 500 ? "ERROR" : "WARN",
-        error: errMsg,
-        endpoint,
-        statusCode: response.status,
+      logger.appError("API put request failed", {
+        category: "api_client",
+        event: "api_put_http_error",
+        metadata: {
+          severity: response.status >= 500 ? "ERROR" : "WARN",
+          error: errMsg,
+          endpoint,
+          statusCode: response.status,
+        },
       });
       throw new Error(errMsg);
     } catch (e) {
       if (!(e instanceof SyntaxError)) throw e;
       const errMsg = `Request failed with status ${response.status}`;
-      logger.appError("api_put", {
-        severity: response.status >= 500 ? "ERROR" : "WARN",
-        error: errMsg,
-        endpoint,
-        statusCode: response.status,
+      // WARN/ERROR: respuesta de error del backend en PUT.
+      logger.appError("API put request failed", {
+        category: "api_client",
+        event: "api_put_http_error",
+        metadata: {
+          severity: response.status >= 500 ? "ERROR" : "WARN",
+          error: errMsg,
+          endpoint,
+          statusCode: response.status,
+        },
       });
       throw new Error(errMsg);
     }
@@ -266,22 +289,32 @@ export async function del(endpoint, requiresAuth = true) {
       const error = await response.json();
       const errMsg =
         error.message || `Request failed with status ${response.status}`;
+      JavaScript;
       // WARN/ERROR: respuesta de error del backend en DELETE.
-      logger.appError("api_delete", {
-        severity: response.status >= 500 ? "ERROR" : "WARN",
-        error: errMsg,
-        endpoint,
-        statusCode: response.status,
+      logger.appError("API delete request failed", {
+        category: "api_client",
+        event: "api_delete_http_error",
+        metadata: {
+          severity: response.status >= 500 ? "ERROR" : "WARN",
+          error: errMsg,
+          endpoint,
+          statusCode: response.status,
+        },
       });
       throw new Error(errMsg);
     } catch (e) {
       if (!(e instanceof SyntaxError)) throw e;
       const errMsg = `Request failed with status ${response.status}`;
-      logger.appError("api_delete", {
-        severity: response.status >= 500 ? "ERROR" : "WARN",
-        error: errMsg,
-        endpoint,
-        statusCode: response.status,
+      // WARN/ERROR: respuesta de error del backend en DELETE.
+      logger.appError("API delete request failed", {
+        category: "api_client",
+        event: "api_delete_http_error",
+        metadata: {
+          severity: response.status >= 500 ? "ERROR" : "WARN",
+          error: errMsg,
+          endpoint,
+          statusCode: response.status,
+        },
       });
       throw new Error(errMsg);
     }

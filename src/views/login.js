@@ -5,6 +5,7 @@ import { getCurrentUser } from "../services/authService.js";
 import toast from "../utils/toast.js";
 import { checkAuth } from "../utils/page-loader.js";
 import { addPasswordToggle } from "../utils/password-toggle.js";
+import logger from "../utils/logger.js";
 
 export default function setupLogin() {
   // Limpiar cualquier intervalo anterior de Google Auth que pueda estar ejecutándose
@@ -17,7 +18,11 @@ export default function setupLogin() {
   if (window.dashboardIntervalId) {
     clearInterval(window.dashboardIntervalId);
     delete window.dashboardIntervalId;
-    console.log("Intervalos del dashboard limpiados en login");
+    logger.info("Stale dashboard intervals cleared successfully", {
+      category: "app_lifecycle",
+      event: "memory_cleanup_success",
+      metadata: { clearedIntervals: ["dashboard"] },
+    });
   }
 
   // Verificar si ya hay una sesión activa y redirigir si es necesario
@@ -176,10 +181,7 @@ export default function setupLogin() {
     const password = passwordInput.value.trim();
 
     try {
-      console.log("Intentando iniciar sesión con:", { email });
-
       const res = await login(email, password);
-      console.log("Respuesta del servidor:", res);
 
       // Guardamos token y usuario en localStorage
       localStorage.setItem("token", res.token);
@@ -238,8 +240,15 @@ export default function setupLogin() {
   if (goSignupBtn) {
     goSignupBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log("Botón go-signup clickeado, navegando a signup...");
-      // Limpiar intervalos antes de navegar
+      // Ejemplo para el botón de registro
+      logger.info("Auth navigation button clicked", {
+        category: "ui_interaction",
+        event: "auth_flow_navigation",
+        metadata: {
+          target_view: "signup", // "recovery", "home"
+          origin_view: "login",
+        },
+      }); // Limpiar intervalos antes de navegar
       if (window.cleanupLoginIntervals) {
         window.cleanupLoginIntervals();
       }
@@ -254,7 +263,15 @@ export default function setupLogin() {
   if (goRecoveryBtn) {
     goRecoveryBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log("Botón go-recovery clickeado, navegando a recovery...");
+      // Ejemplo para el botón de recuperación
+      logger.info("Auth navigation button clicked", {
+        category: "ui_interaction",
+        event: "auth_flow_navigation",
+        metadata: {
+          target_view: "recovery",
+          origin_view: "login",
+        },
+      });
       // Limpiar intervalos antes de navegar
       if (window.cleanupLoginIntervals) {
         window.cleanupLoginIntervals();
@@ -270,7 +287,15 @@ export default function setupLogin() {
   if (goHomeButton) {
     goHomeButton.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log("Botón go-home clickeado, navegando a home...");
+      // Ejemplo para el botón de navegación al home
+      logger.info("Auth navigation button clicked", {
+        category: "ui_interaction",
+        event: "auth_flow_navigation",
+        metadata: {
+          target_view: "home",
+          origin_view: "login",
+        },
+      });
       // Limpiar intervalos antes de navegar
       if (window.cleanupLoginIntervals) {
         window.cleanupLoginIntervals();
@@ -393,12 +418,26 @@ export default function setupLogin() {
     if (window.googleAuthCheckInterval) {
       clearInterval(window.googleAuthCheckInterval);
       delete window.googleAuthCheckInterval;
-      console.log("Intervalos de Google Auth limpiados");
+      logger.info("Stale background intervals cleared successfully", {
+        category: "app_lifecycle",
+        event: "memory_cleanup_success",
+        metadata: {
+          view: "login", // o la vista correspondiente
+          clearedIntervals: ["google_auth", "dashboard"],
+        },
+      });
     }
     if (window.dashboardIntervalId) {
       clearInterval(window.dashboardIntervalId);
       delete window.dashboardIntervalId;
-      console.log("Intervalos del dashboard limpiados");
+      logger.info("Stale background intervals cleared successfully", {
+        category: "app_lifecycle",
+        event: "memory_cleanup_success",
+        metadata: {
+          view: "login",
+          clearedIntervals: ["google_auth", "dashboard"],
+        },
+      });
     }
   };
 

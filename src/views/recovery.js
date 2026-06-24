@@ -4,7 +4,6 @@ import { navigateTo } from "../router.js";
 import toast from "../utils/toast.js";
 
 export default function setupRecovery() {
-  console.log("Configurando página de recuperación");
 
   // Referencias a elementos del DOM
   const form = document.getElementById("recovery-form");
@@ -15,7 +14,10 @@ export default function setupRecovery() {
   const emailError = document.getElementById("email-error");
 
   if (!form) {
-    console.error("Formulario de recuperación no encontrado");
+    logger.appError("Recovery form not found in DOM", {
+      category: "ui_interaction",
+      event: "recovery_form_render_failed",
+    });
     return;
   }
 
@@ -85,7 +87,6 @@ export default function setupRecovery() {
     submitButton.disabled = true;
 
     try {
-      console.log("Enviando solicitud de recuperación para:", email);
 
       // Simular un tiempo mínimo de procesamiento
       const startTime = Date.now();
@@ -95,7 +96,6 @@ export default function setupRecovery() {
 
       await new Promise((resolve) => setTimeout(resolve, remainingTime));
 
-      console.log("Respuesta de recuperación:", result);
 
       if (result.success !== false) {
         // Mostrar mensaje de éxito

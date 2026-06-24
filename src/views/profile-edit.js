@@ -14,7 +14,6 @@ let isInitialized = false;
  * Resetear estado del profile-edit para forzar reinicialización
  */
 export function resetProfileEditState() {
-  console.log("Reseteando estado del profile-edit");
   isInitialized = false;
   originalData = null;
   isLoading = false;
@@ -29,27 +28,41 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * Configuración inicial de la página de edición de perfil
  */
 function initProfileEdit() {
-  console.log("Inicializando página de edición de perfil");
-
   // Limpiar cualquier intervalo del dashboard que pueda estar ejecutándose
   if (window.dashboardIntervalId) {
     clearInterval(window.dashboardIntervalId);
     window.dashboardIntervalId = null;
-    console.log("Intervalos del dashboard limpiados en profile-edit");
+    logger.info("Stale background intervals cleared successfully", {
+      category: "app_lifecycle",
+      event: "memory_cleanup_success",
+      metadata: {
+        view: "profile_edit", // o la vista correspondiente
+        clearedIntervals: ["google_auth", "dashboard"],
+      },
+    });
   }
 
   // Limpiar cualquier intervalo de Google Auth que pueda estar ejecutándose
   if (window.googleAuthCheckInterval) {
     clearInterval(window.googleAuthCheckInterval);
     delete window.googleAuthCheckInterval;
-    console.log("Intervalos de Google Auth limpiados en profile-edit");
+    logger.info("Stale background intervals cleared successfully", {
+      category: "app_lifecycle",
+      event: "memory_cleanup_success",
+      metadata: {
+        view: "profile_edit",
+        clearedIntervals: ["google_auth", "dashboard"],
+      },
+    });
   }
 
   // Prevenir múltiples inicializaciones de datos, pero siempre configurar event listeners
   if (isInitialized) {
-    console.log(
-      "Profile-edit ya inicializado, reconfigurando listeners y cargando datos..."
-    );
+    logger.info("Reinitializing active profile view components", {
+      category: "ui_navigation",
+      event: "view_rehydration_triggered",
+      metadata: { viewName: "profile_edit" },
+    });
     setupEventListeners(); // Siempre reconfigurar listeners
     loadProfileData();
     return;
@@ -58,7 +71,10 @@ function initProfileEdit() {
   // Verificar autenticación
   const token = localStorage.getItem("token");
   if (!token) {
-    console.log("No hay token, redirigiendo a login");
+    logger.info("Authentication missing, redirecting to login", {
+      category: "auth_security",
+      event: "unauthenticated_route_intercepted",
+    });
     navigate("login");
     return;
   }
@@ -82,7 +98,10 @@ function setupEventListeners() {
   if (backBtn) {
     backBtn.addEventListener("click", function (e) {
       e.preventDefault();
-      console.log("Botón volver al perfil clickeado");
+      logger.info("User cancelled profile editing", {
+        category: "ui_interaction",
+        event: "profile_edit_cancelled",
+      });
       try {
         resetProfileState(); // Resetear estado antes de navegar
         navigate("profile");
@@ -97,7 +116,10 @@ function setupEventListeners() {
   if (cancelBtn) {
     cancelBtn.addEventListener("click", function (e) {
       e.preventDefault();
-      console.log("Botón cancelar clickeado");
+      logger.info("User cancelled profile editing", {
+        category: "ui_interaction",
+        event: "profile_edit_cancelled",
+      });
       try {
         resetProfileState(); // Resetear estado antes de navegar
         navigate("profile");
@@ -118,11 +140,19 @@ function setupEventListeners() {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function (e) {
       e.preventDefault();
-      console.log("Botón logout clickeado en profile-edit");
+      logger.info("User initiated logout from profile edit view", {
+        category: "auth_security",
+        event: "logout_triggered",
+        metadata: { origin_view: "profile_edit" },
+      });
       try {
         handleLogout();
       } catch (error) {
-        console.error("Error en logout desde profile-edit:", error);
+        logger.appError("Failed to cancel profile editing and navigate back", {
+          category: "ui_navigation",
+          event: "profile_cancel_action_failed",
+          metadata: { error: error.message },
+        });
       }
     });
   }
@@ -341,7 +371,6 @@ function updateHeaderInfo(profile) {
 function updateNavInfo(profile) {
   // Los elementos ya se actualizan en updateHeaderInfo
   // Pero agreguemos logs para debugging
-  console.log("Actualizando info del nav en profile-edit con perfil:", profile);
 
   // También actualizar localStorage para que otros componentes lo usen
   const userData = {
@@ -352,7 +381,6 @@ function updateNavInfo(profile) {
   };
 
   localStorage.setItem("user", JSON.stringify(userData));
-  console.log("Datos de usuario guardados en localStorage desde profile-edit");
 }
 
 /**
@@ -507,7 +535,7 @@ function updatePasswordButtonState() {
 
   const fields = ["currentPassword", "newPassword", "confirmPassword"];
   const allValid = fields.every((fieldName) =>
-    validatePasswordField(fieldName)
+    validatePasswordField(fieldName),
   );
 
   btn.disabled = !allValid || isChangingPassword;
@@ -527,7 +555,7 @@ function hasProfileChanges() {
   };
 
   return Object.keys(currentData).some(
-    (key) => currentData[key] !== originalData[key]
+    (key) => currentData[key] !== originalData[key],
   );
 }
 
@@ -546,7 +574,7 @@ async function handleProfileSubmit(e) {
   if (!allValid) {
     window.toast?.show(
       "Por favor, corrige los errores en el formulario",
-      "error"
+      "error",
     );
     return;
   }
@@ -614,7 +642,7 @@ async function handleProfileSubmit(e) {
     } else {
       window.toast?.show(
         error.message || "Error al actualizar el perfil",
-        "error"
+        "error",
       );
     }
   } finally {
@@ -636,13 +664,13 @@ async function handlePasswordSubmit(e) {
   // Validar todos los campos
   const fields = ["currentPassword", "newPassword", "confirmPassword"];
   const allValid = fields.every((fieldName) =>
-    validatePasswordField(fieldName)
+    validatePasswordField(fieldName),
   );
 
   if (!allValid) {
     window.toast?.show(
       "Por favor, corrige los errores en el formulario",
-      "error"
+      "error",
     );
     return;
   }
@@ -697,7 +725,7 @@ async function handlePasswordSubmit(e) {
     console.error("Error changing password:", error);
     window.toast?.show(
       error.message || "Error al cambiar la contraseña",
-      "error"
+      "error",
     );
   } finally {
     isChangingPassword = false;

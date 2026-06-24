@@ -2,7 +2,7 @@ import { handleRouting } from "./router.js";
 // import "./utils/google-auth-handler.js"; // Comentado: manejador de autenticación de Google deshabilitado
 import toast from "./utils/toast.js"; // Importar el sistema de toast
 import footerManager from "./utils/footer-manager.js"; // Importar el gestor del footer
-import "./test-env.js";
+import logger from "./utils/logger.js";
 
 // Exponer sistema de toast globalmente
 window.toast = toast;
@@ -11,11 +11,16 @@ window.toast = toast;
 window.footerManager = footerManager;
 
 // Para depuración
-console.log("Aplicación iniciada");
+logger.info("App started", { event: "app_start" });
 
 // Verificar si hay una redirección pendiente desde autenticación
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM cargado, iniciando routing");
+  // INFO: Routing initialized
+  logger.info("Routing initialized", {
+    category: "app_lifecycle",
+    event: "routing_init",
+    mode: "client_router",
+  });
 
   // Forzar scroll al top al cargar la página
   window.scrollTo(0, 0);
@@ -23,11 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
   document.body.scrollTop = 0;
 
   const needsDashboardRedirect = localStorage.getItem(
-    "needs_dashboard_redirect"
+    "needs_dashboard_redirect",
   );
 
   if (needsDashboardRedirect === "true") {
-    console.log("Detectada redirección pendiente al dashboard");
+    // INFO: Detectada redirección pendiente al dashboard
+    logger.info("Pending redirect to dashboard detected", {
+      category: "ui_navigation",
+      event: "dashboard_redirect_detected",
+    });
     localStorage.removeItem("needs_dashboard_redirect");
   }
 
@@ -40,7 +49,14 @@ if (
   document.readyState === "complete" ||
   document.readyState === "interactive"
 ) {
-  console.log("DOM ya está cargado, iniciando routing inmediatamente");
+  logger.info("Routing initialized on DOM load", {
+    category: "app_lifecycle",
+    event: "routing_init",
+    metadata: {
+      path: window.location.pathname,
+      hash: window.location.hash,
+    },
+  });
   // Forzar scroll al top
   window.scrollTo(0, 0);
   document.documentElement.scrollTop = 0;
@@ -50,7 +66,7 @@ if (
 
 // Manejar el evento de carga completa de la ventana
 window.addEventListener("load", () => {
-  console.log("Ventana completamente cargada");
+  // clog("Ventana completamente cargada");
   // Forzar scroll al top después de la carga completa
   window.scrollTo(0, 0);
   document.documentElement.scrollTop = 0;
